@@ -1,0 +1,43 @@
+{
+    "name": "somosgad/laravel-payu",
+    "description": ":description",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Giovanni Pires da Silva",
+            "email": "giovanni@somosgad.com",
+            "homepage": "https://somosgad.com"
+        }
+    ],
+    "homepage": "https://github.com/somosgad/laravel-payu",
+    "keywords": ["Laravel", "LaravelPayU"],
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3.0",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "SomosGAD_\\LaravelPayU\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SomosGAD_\\LaravelPayU\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SomosGAD_\\LaravelPayU\\LaravelPayUServiceProvider"
+            ],
+            "aliases": {
+                "LaravelPayU": "SomosGAD_\\LaravelPayU\\Facades\\LaravelPayU"
+            }
+        }
+    }
+}
