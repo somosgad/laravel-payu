@@ -4,5 +4,7 @@ namespace SomosGAD_\LaravelPayU;
 
 class LaravelPayU
 {
-    // Build wonderful things
+    public function createPayment() {
+        $url = 'https://api.paymentsos.com/payments';
+    }
 }
