@@ -12,12 +12,11 @@
     "homepage": "https://github.com/somosgad/laravel-payu",
     "keywords": ["Laravel", "LaravelPayU"],
     "require": {
-        "illuminate/support": "~5"
+        "illuminate/support": "^6.7"
     },
     "require-dev": {
         "phpunit/phpunit": "~7.0",
         "mockery/mockery": "^1.1",
-        "orchestra/testbench": "~3.0",
         "sempro/phpunit-pretty-print": "^1.0"
     },
     "autoload": {

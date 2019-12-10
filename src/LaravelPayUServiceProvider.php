@@ -1,6 +1,6 @@
 <?php
 
-namespace SomosGAD\LaravelPayU;
+namespace SomosGAD_\LaravelPayU;
 
 use Illuminate\Support\ServiceProvider;
 
