@@ -14,7 +14,8 @@ class LaravelPayUTest extends TestCase
      */
     public function testCreatePayment()
     {
-        $payment = LaravelPayU::createPayment();
+        $payu = new LaravelPayU;
+        $payment = $payu->createPayment();
 
         $this->assertArrayHasKey('id', $payment);
         $this->assertArrayHasKey('currency', $payment);
