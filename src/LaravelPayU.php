@@ -14,16 +14,16 @@ class LaravelPayU
             'currency' => 'USD',
         ];
         $headers = [
-            'app-id' => env('PAYU_APP_ID'),
-            'private_key' => env('PAYU_PRIVATE_KEY'),
+            'app-id' => getenv('PAYU_APP_ID'),
+            'private_key' => getenv('PAYU_PRIVATE_KEY'),
             'api-version' => '1.3.0',
-            'x-payments-os-env' => env('PAYU_ENV'),
+            'x-payments-os-env' => getenv('PAYU_ENV'),
             'idempotency_key' => 'cust-34532-trans-001356-p',
         ];
         $response = $http->post($url, compact('json', 'headers'));
-
-        return true;
-
-        return json_decode((string) $response->getBody(), true);
+        $guzzleBodyStream = $response->getBody();
+        $json = (string) $guzzleBodyStream;
+        $array = json_decode($json, true);
+        return $array;
     }
 }
