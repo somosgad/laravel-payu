@@ -8,13 +8,14 @@ use SomosGAD_\LaravelPayU\LaravelPayU;
 class LaravelPayUTest extends TestCase
 {
     /**
-     * Test create token.
+     * Mock create token.
      *
      * @return void
      */
-    public function testCreateToken()
+    private function mockToken()
     {
         $payu = new LaravelPayU;
+
         $mockData = [
             'card_number' => '4111111111111111',
             'credit_card_cvv' => '123',
@@ -23,6 +24,7 @@ class LaravelPayUTest extends TestCase
             'token_type' => 'credit_card',
         ];
         extract($mockData);
+
         $token = $payu->createToken(
             $card_number,
             $credit_card_cvv,
@@ -31,7 +33,91 @@ class LaravelPayUTest extends TestCase
             $token_type
         );
 
+        return $token;
+    }
+
+    /**
+     * Test create charge.
+     *
+     * @return void
+     */
+    public function testCreateCharge()
+    {
+        $payu = new LaravelPayU;
+
         $this->assertInstanceOf(LaravelPayU::class, $payu);
+
+        $payment = $payu->createPayment();
+
+        $token = $this->mockToken();
+
+        $charge = $payu->createCharge(
+            $payment['id'],
+            $token['encrypted_cvv'],
+            $token['token']
+        );
+
+        $this->assertArrayHasKey('id', $charge);
+        $this->assertArrayHasKey('created', $charge);
+        $this->assertArrayHasKey('provider_specific_data', $charge);
+        $this->assertArrayHasKey('payment_method', $charge);
+        $this->assertArrayHasKey('result', $charge);
+        $this->assertArrayHasKey('provider_data', $charge);
+        $this->assertArrayHasKey('amount', $charge);
+        $this->assertArrayHasKey('provider_configuration', $charge);
+
+        $this->assertIsString($charge['id']);
+        $this->assertIsNumeric($charge['created']);
+        $this->assertIsArray($charge['provider_specific_data']);
+        $this->assertIsArray($charge['payment_method']);
+        $this->assertIsArray($charge['result']);
+        $this->assertIsArray($charge['provider_data']);
+        $this->assertIsNumeric($charge['amount']);
+        $this->assertIsArray($charge['provider_configuration']);
+    }
+
+    /**
+     * Test create payment.
+     *
+     * @return void
+     */
+    public function testCreatePayment()
+    {
+        $payu = new LaravelPayU;
+
+        $this->assertInstanceOf(LaravelPayU::class, $payu);
+
+        $payment = $payu->createPayment();
+
+        $this->assertArrayHasKey('id', $payment);
+        $this->assertArrayHasKey('currency', $payment);
+        $this->assertArrayHasKey('created', $payment);
+        $this->assertArrayHasKey('modified', $payment);
+        $this->assertArrayHasKey('status', $payment);
+        $this->assertArrayHasKey('possible_next_actions', $payment);
+        $this->assertArrayHasKey('amount', $payment);
+
+        $this->assertIsString($payment['id']);
+        $this->assertIsString($payment['currency']);
+        $this->assertIsNumeric($payment['created']);
+        $this->assertIsNumeric($payment['modified']);
+        $this->assertIsString($payment['status']);
+        $this->assertIsArray($payment['possible_next_actions']);
+        $this->assertIsNumeric($payment['amount']);
+    }
+
+    /**
+     * Test create token.
+     *
+     * @return void
+     */
+    public function testCreateToken()
+    {
+        $payu = new LaravelPayU;
+
+        $this->assertInstanceOf(LaravelPayU::class, $payu);
+
+        $token = $this->mockToken();
 
         $this->assertArrayHasKey('token', $token);
         $this->assertArrayHasKey('created', $token);
@@ -66,34 +152,5 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($token['holder_name']);
         $this->assertIsString($token['expiration_date']);
         $this->assertIsNumeric($token['last_4_digits']);
-    }
-
-    /**
-     * Test create payment.
-     *
-     * @return void
-     */
-    public function testCreatePayment()
-    {
-        $payu = new LaravelPayU;
-        $payment = $payu->createPayment();
-
-        $this->assertInstanceOf(LaravelPayU::class, $payu);
-
-        $this->assertArrayHasKey('id', $payment);
-        $this->assertArrayHasKey('currency', $payment);
-        $this->assertArrayHasKey('created', $payment);
-        $this->assertArrayHasKey('modified', $payment);
-        $this->assertArrayHasKey('status', $payment);
-        $this->assertArrayHasKey('possible_next_actions', $payment);
-        $this->assertArrayHasKey('amount', $payment);
-
-        $this->assertIsString($payment['id']);
-        $this->assertIsString($payment['currency']);
-        $this->assertIsNumeric($payment['created']);
-        $this->assertIsNumeric($payment['modified']);
-        $this->assertIsString($payment['status']);
-        $this->assertIsArray($payment['possible_next_actions']);
-        $this->assertIsNumeric($payment['amount']);
     }
 }

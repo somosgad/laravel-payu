@@ -60,9 +60,9 @@ class LaravelPayU
 
     public function createCharge($paymentId, $cvv, $token)
     {
-        $url = "https://api.paymentsos.com/payments/{{paymentid}}/charges";
+        $url = "https://api.paymentsos.com/payments/$paymentId/charges";
         $headers = array_merge($this->headers, [
-            'idempotency_key' => 'cust-34532-trans-001356-p',
+            'idempotency_key' => 'cust-34532-trans-001356-p2',
             'private_key' => getenv('PAYU_PRIVATE_KEY'),
         ]);
         $json = [
