@@ -9,7 +9,7 @@ class LaravelPayU
     public static function createPayment() {
         $http = new Client;
         $url = 'https://api.paymentsos.com/payments';
-        $form_params = [
+        $json = [
             'amount' => 2000,
             'currency' => 'USD',
         ];
@@ -21,7 +21,7 @@ class LaravelPayU
             'x-payments-os-env' => env('PAYU_ENV'),
             'idempotency_key' => 'cust-34532-trans-001356-p',
         ];
-        $response = $http->post($url, compact('form_params', 'headers'));
+        $response = $http->post($url, compact('json', 'headers'));
 
         return json_decode((string) $response->getBody(), true);
     }
