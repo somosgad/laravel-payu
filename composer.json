@@ -13,11 +13,11 @@
     "keywords": ["Laravel", "LaravelPayU"],
     "require": {
         "illuminate/support": "^6.7",
-        "guzzlehttp/guzzle": "^6.5"
+        "guzzlehttp/guzzle": "^6.5",
+        "sempro/phpunit-pretty-print": "^1.2"
     },
     "require-dev": {
         "mockery/mockery": "@stable",
-        "sempro/phpunit-pretty-print": "^1.0",
         "phpunit/phpunit": "^8.5"
     },
     "autoload": {
