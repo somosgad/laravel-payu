@@ -16,7 +16,6 @@ class LaravelPayU
         $headers = [
             'app-id' => env('PAYU_APP_ID'),
             'private_key' => env('PAYU_PRIVATE_KEY'),
-            'Content-Type' => 'application/json',
             'api-version' => '1.3.0',
             'x-payments-os-env' => env('PAYU_ENV'),
             'idempotency_key' => 'cust-34532-trans-001356-p',
