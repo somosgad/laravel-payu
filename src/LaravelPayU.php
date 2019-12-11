@@ -22,6 +22,8 @@ class LaravelPayU
         ];
         $response = $http->post($url, compact('json', 'headers'));
 
+        return true;
+
         return json_decode((string) $response->getBody(), true);
     }
 }
