@@ -24,6 +24,24 @@ class LaravelPayU
         $this->private_key = getenv('PAYU_PRIVATE_KEY');
     }
 
+    public function createAuthorization(string $paymentId, string $cvv, string $token)
+    {
+        $url = "https://api.paymentsos.com/payments/$paymentId/authorizations";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $json = [
+            'payment_method' => [
+                'credit_card_cvv' => $cvv,
+                'token' => $token,
+                'type' => 'tokenized',
+            ],
+        ];
+        $response = $this->http->post($url, compact('headers', 'json'));
+        return $this->format($response);
+    }
+
     public function createCharge(string $paymentId, string $cvv, string $token)
     {
         $url = "https://api.paymentsos.com/payments/$paymentId/charges";

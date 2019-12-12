@@ -31,15 +31,53 @@ class LaravelPayUTest extends TestCase
     }
 
     /**
-     * Test create charge.
+     * Test create authorization.
      *
+     * @depends testInstance
      * @return void
      */
-    public function testCreateCharge()
+    public function testCreateAuthorization(LaravelPayU $payu)
     {
-        $payu = new LaravelPayU;
-        $this->assertInstanceOf(LaravelPayU::class, $payu);
+        $amount = 2000;
+        $currency = 'USD';
+        $payment = $payu->createPayment($amount, $currency);
 
+        $token = $this->mockToken();
+        $authorization = $payu->createAuthorization(
+            $payment['id'],
+            $token['encrypted_cvv'],
+            $token['token']
+        );
+
+        $this->assertArrayHasKey('id', $authorization);
+        $this->assertArrayHasKey('created', $authorization);
+        $this->assertArrayHasKey('provider_specific_data', $authorization);
+        $this->assertArrayHasKey('payment_method', $authorization);
+        $this->assertArrayHasKey('result', $authorization);
+        $this->assertArrayHasKey('provider_data', $authorization);
+        $this->assertArrayHasKey('amount', $authorization);
+        $this->assertArrayHasKey('provider_configuration', $authorization);
+
+        $this->assertIsString($authorization['id']);
+        $this->assertIsNumeric($authorization['created']);
+        $this->assertIsArray($authorization['provider_specific_data']);
+        $this->assertIsArray($authorization['payment_method']);
+        $this->assertIsArray($authorization['result']);
+        $this->assertIsArray($authorization['provider_data']);
+        $this->assertIsNumeric($authorization['amount']);
+        $this->assertIsArray($authorization['provider_configuration']);
+
+        $this->assertEqualsIgnoringCase('Authorized.', $authorization['provider_data']['description']);
+    }
+
+    /**
+     * Test create charge.
+     *
+     * @depends testInstance
+     * @return void
+     */
+    public function testCreateCharge(LaravelPayU $payu)
+    {
         $amount = 2000;
         $currency = 'USD';
         $payment = $payu->createPayment($amount, $currency);
@@ -68,18 +106,18 @@ class LaravelPayUTest extends TestCase
         $this->assertIsArray($charge['provider_data']);
         $this->assertIsNumeric($charge['amount']);
         $this->assertIsArray($charge['provider_configuration']);
+
+        $this->assertEqualsIgnoringCase('Captured.', $charge['provider_data']['description']);
     }
 
     /**
      * Test create payment.
      *
+     * @depends testInstance
      * @return void
      */
-    public function testCreatePayment()
+    public function testCreatePayment(LaravelPayU $payu)
     {
-        $payu = new LaravelPayU;
-        $this->assertInstanceOf(LaravelPayU::class, $payu);
-
         $amount = 2000;
         $currency = 'USD';
         $payment = $payu->createPayment($amount, $currency);
@@ -104,13 +142,11 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create token.
      *
+     * @depends testInstance
      * @return void
      */
-    public function testCreateToken()
+    public function testCreateToken(LaravelPayU $payu)
     {
-        $payu = new LaravelPayU;
-        $this->assertInstanceOf(LaravelPayU::class, $payu);
-
         $token = $this->mockToken();
 
         $this->assertArrayHasKey('token', $token);
@@ -146,5 +182,17 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($token['holder_name']);
         $this->assertIsString($token['expiration_date']);
         $this->assertIsNumeric($token['last_4_digits']);
+    }
+
+    /**
+     * Test package's instance.
+     *
+     * @return void
+     */
+    public function testInstance()
+    {
+        $payu = new LaravelPayU;
+        $this->assertInstanceOf(LaravelPayU::class, $payu);
+        return $payu;
     }
 }
