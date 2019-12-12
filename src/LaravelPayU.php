@@ -75,14 +75,35 @@ class LaravelPayU
         return $this->format($response);
     }
 
-    public function createPayment(int $amount, string $currency) // string $statement_soft_descriptor
+    public function createPayment(
+        int $amount,
+        string $currency,
+        object $additional_details = null,
+        string $statement_soft_descriptor = null,
+        object $order = null,
+        string $customer_id = null,
+        object $shipping_address = null,
+        object $billing_address = null
+    )
     {
         $url = 'payments';
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
-        $json = compact('amount', 'currency'); // 'statement_soft_descriptor'
+        $json = array_filter(
+            compact(
+                'amount',
+                'currency',
+                'additional_details',
+                'statement_soft_descriptor',
+                'order',
+                'customer_id',
+                'shipping_address',
+                'billing_address',
+            ),
+            'is_not_null',
+        );
         $response = $this->http->post($url, compact('headers', 'json'));
         return $this->format($response);
     }
