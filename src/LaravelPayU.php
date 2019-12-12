@@ -24,6 +24,36 @@ class LaravelPayU
         $this->private_key = getenv('PAYU_PRIVATE_KEY');
     }
 
+    public function createCharge(string $paymentId, string $cvv, string $token)
+    {
+        $url = "https://api.paymentsos.com/payments/$paymentId/charges";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $json = [
+            'payment_method' => [
+                'credit_card_cvv' => $cvv,
+                'token' => $token,
+                'type' => 'tokenized',
+            ],
+        ];
+        $response = $this->http->post($url, compact('headers', 'json'));
+        return $this->format($response);
+    }
+
+    public function createPayment(int $amount, string $currency)
+    {
+        $url = 'https://api.paymentsos.com/payments';
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $json = compact('amount', 'currency');
+        $response = $this->http->post($url, compact('headers', 'json'));
+        return $this->format($response);
+    }
+
     public function createToken(
         string $card_number,
         string $credit_card_cvv,
@@ -43,36 +73,6 @@ class LaravelPayU
             'holder_name',
             'token_type',
         );
-        $response = $this->http->post($url, compact('headers', 'json'));
-        return $this->format($response);
-    }
-
-    public function createPayment(int $amount, string $currency)
-    {
-        $url = 'https://api.paymentsos.com/payments';
-        $headers = array_merge($this->headers, [
-            'idempotency_key' => rand(),
-            'private_key' => $this->private_key,
-        ]);
-        $json = compact('amount', 'currency');
-        $response = $this->http->post($url, compact('headers', 'json'));
-        return $this->format($response);
-    }
-
-    public function createCharge(string $paymentId, string $cvv, string $token)
-    {
-        $url = "https://api.paymentsos.com/payments/$paymentId/charges";
-        $headers = array_merge($this->headers, [
-            'idempotency_key' => rand(),
-            'private_key' => $this->private_key,
-        ]);
-        $json = [
-            'payment_method' => [
-                'credit_card_cvv' => $cvv,
-                'token' => $token,
-                'type' => 'tokenized',
-            ],
-        ];
         $response = $this->http->post($url, compact('headers', 'json'));
         return $this->format($response);
     }
