@@ -7,7 +7,12 @@
             "name": "Giovanni Pires da Silva",
             "email": "giovanni@somosgad.com",
             "homepage": "https://somosgad.com"
+        },
+        {
+            "name": "Camilo Cunha de Azevedo",
+            "email": "camilo@somosgad.com"
         }
+
     ],
     "homepage": "https://github.com/somosgad/laravel-payu",
     "keywords": ["Laravel", "LaravelPayU"],
