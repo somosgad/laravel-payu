@@ -73,6 +73,34 @@ class LaravelPayUTest extends TestCase
     }
 
     /**
+     * Test create capture.
+     *
+     * @depends testCreateAuthorization
+     * @return void
+     */
+    public function testCreateCapture(array $data)
+    {
+        $capture = $data['payu']->createCapture(
+            $data['payment']['id'],
+            $data['payment']['amount'],
+        );
+
+        $this->assertArrayHasKey('id', $capture);
+        $this->assertArrayHasKey('created', $capture);
+        $this->assertArrayHasKey('result', $capture);
+        $this->assertArrayHasKey('amount', $capture);
+        $this->assertArrayHasKey('provider_data', $capture);
+        $this->assertArrayHasKey('provider_configuration', $capture);
+
+        $this->assertIsString($capture['id']);
+        $this->assertIsNumeric($capture['created']);
+        $this->assertIsArray($capture['result']);
+        $this->assertIsNumeric($capture['amount']);
+        $this->assertIsArray($capture['provider_data']);
+        $this->assertIsArray($capture['provider_configuration']);
+    }
+
+    /**
      * Test create charge.
      *
      * @depends testInstance
