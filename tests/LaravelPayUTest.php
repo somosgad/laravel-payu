@@ -112,6 +112,65 @@ class LaravelPayUTest extends TestCase
         $this->assertEqualsIgnoringCase('Captured.', $charge['provider_data']['description']);
     }
 
+     /**
+     * Test Void. a void cancels an operation (such as an authorization or
+     * capture), before it has been finalized. The most common procedure is
+     * to void an authorization.
+     *
+     * @depends testInstance
+     * @return void
+     */
+    public function testMakeVoid(LaravelPayU $payu)
+    {
+        $amount = 1203.30;
+        $currency = 'USD';
+        $payment = $payu->createPayment($amount, $currency);
+
+        $token = $this->mockToken();
+        $charge = $payu->createCharge(
+            $payment['id'],
+            $token['encrypted_cvv'],
+            $token['token']
+        );
+
+       $output = $payu->makeVoid($payment['id']);
+       $this->assertArrayHasKey('id', $output);
+       $this->assertArrayHasKey('created', $output);
+       $this->assertArrayHasKey('provider_data', $output);
+       $this->assertArrayHasKey('result', $output);
+       $this->assertArrayHasKey('amount', $output);
+       $this->assertArrayHasKey('provider_configuration', $output);
+    }
+
+    /**
+     * Test create payment.
+     *
+     * @depends testInstance
+     * @return void
+     */
+    public function testMakeRefund(LaravelPayU $payu)
+    {
+        $amount = 1203.30;
+        $currency = 'USD';
+        $payment = $payu->createPayment($amount, $currency);
+
+        $token = $this->mockToken();
+        $charge = $payu->createCharge(
+            $payment['id'],
+            $token['encrypted_cvv'],
+            $token['token']
+        );
+
+       $output = $payu->makeRefund($payment['id']);
+
+       $this->assertArrayHasKey('id', $output);
+       $this->assertArrayHasKey('created', $output);
+       $this->assertArrayHasKey('provider_data', $output);
+       $this->assertArrayHasKey('result', $output);
+       $this->assertArrayHasKey('amount', $output);
+       $this->assertArrayHasKey('provider_configuration', $output);
+    }
+
     /**
      * Test create payment.
      *

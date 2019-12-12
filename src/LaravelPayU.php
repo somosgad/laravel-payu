@@ -72,6 +72,26 @@ class LaravelPayU
         return $this->format($response);
     }
 
+    public function makeRefund(string $paymentID) {
+        $url = "https://api.paymentsos.com/payments/${paymentID}/refunds";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $response = $this->http->post($url, compact('headers'));
+        return $this->format($response);
+    }
+
+    public function makeVoid(string $paymentID) {
+        $url = "https://api.paymentsos.com/payments/${paymentID}/refunds";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $response = $this->http->post($url, compact('headers'));
+        return $this->format($response);
+    }
+
     public function createToken(
         string $card_number,
         string $credit_card_cvv,
