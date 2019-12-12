@@ -102,4 +102,15 @@ class LaravelPayU
         $array = json_decode($json_string, true);
         return $array;
     }
+
+    public function getAuthorization(string $paymentId, string $authorizationid)
+    {
+        $url = "https://api.paymentsos.com/payments/$paymentId/authorizations/$authorizationid";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $response = $this->http->get($url, compact('headers'));
+        return $this->format($response);
+    }
 }

@@ -68,6 +68,8 @@ class LaravelPayUTest extends TestCase
         $this->assertIsArray($authorization['provider_configuration']);
 
         $this->assertEqualsIgnoringCase('Authorized.', $authorization['provider_data']['description']);
+
+        return compact('payu', 'payment', 'authorization');
     }
 
     /**
@@ -182,6 +184,38 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($token['holder_name']);
         $this->assertIsString($token['expiration_date']);
         $this->assertIsNumeric($token['last_4_digits']);
+    }
+
+    /**
+     * Test create authorization.
+     *
+     * @depends testCreateAuthorization
+     * @return void
+     */
+    public function testGetAuthorization(array $data)
+    {
+        $authorization = $data['payu']->getAuthorization(
+            $data['payment']['id'],
+            $data['authorization']['id']
+        );
+
+        $this->assertArrayHasKey('id', $authorization);
+        $this->assertArrayHasKey('created', $authorization);
+        $this->assertArrayHasKey('payment_method', $authorization);
+        $this->assertArrayHasKey('result', $authorization);
+        $this->assertArrayHasKey('provider_data', $authorization);
+        $this->assertArrayHasKey('amount', $authorization);
+        $this->assertArrayHasKey('provider_configuration', $authorization);
+
+        $this->assertIsString($authorization['id']);
+        $this->assertIsNumeric($authorization['created']);
+        $this->assertIsArray($authorization['payment_method']);
+        $this->assertIsArray($authorization['result']);
+        $this->assertIsArray($authorization['provider_data']);
+        $this->assertIsNumeric($authorization['amount']);
+        $this->assertIsArray($authorization['provider_configuration']);
+
+        $this->assertEqualsIgnoringCase('Authorized.', $authorization['provider_data']['description']);
     }
 
     /**
