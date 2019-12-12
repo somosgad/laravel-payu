@@ -15,16 +15,11 @@ class LaravelPayUTest extends TestCase
     private function mockToken()
     {
         $payu = new LaravelPayU;
-
-        $mockData = [
-            'card_number' => '4111111111111111',
-            'credit_card_cvv' => '123',
-            'expiration_date' => '10/29',
-            'holder_name' => 'John Doe',
-            'token_type' => 'credit_card',
-        ];
-        extract($mockData);
-
+        $card_number = '4111111111111111';
+        $credit_card_cvv = '123';
+        $expiration_date = '10/29';
+        $holder_name = 'John Doe';
+        $token_type = 'credit_card';
         $token = $payu->createToken(
             $card_number,
             $credit_card_cvv,
@@ -32,7 +27,6 @@ class LaravelPayUTest extends TestCase
             $holder_name,
             $token_type
         );
-
         return $token;
     }
 
@@ -44,13 +38,13 @@ class LaravelPayUTest extends TestCase
     public function testCreateCharge()
     {
         $payu = new LaravelPayU;
-
         $this->assertInstanceOf(LaravelPayU::class, $payu);
 
-        $payment = $payu->createPayment();
+        $amount = 2000;
+        $currency = 'USD';
+        $payment = $payu->createPayment($amount, $currency);
 
         $token = $this->mockToken();
-
         $charge = $payu->createCharge(
             $payment['id'],
             $token['encrypted_cvv'],
@@ -84,10 +78,11 @@ class LaravelPayUTest extends TestCase
     public function testCreatePayment()
     {
         $payu = new LaravelPayU;
-
         $this->assertInstanceOf(LaravelPayU::class, $payu);
 
-        $payment = $payu->createPayment();
+        $amount = 2000;
+        $currency = 'USD';
+        $payment = $payu->createPayment($amount, $currency);
 
         $this->assertArrayHasKey('id', $payment);
         $this->assertArrayHasKey('currency', $payment);
@@ -114,7 +109,6 @@ class LaravelPayUTest extends TestCase
     public function testCreateToken()
     {
         $payu = new LaravelPayU;
-
         $this->assertInstanceOf(LaravelPayU::class, $payu);
 
         $token = $this->mockToken();
