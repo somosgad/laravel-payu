@@ -13,7 +13,9 @@ class LaravelPayU
 
     public function __construct()
     {
-        $this->http = new Client;
+        $this->http = new Client([
+            'base_uri' => 'https://api.paymentsos.com',
+        ]);
         $this->headers = [
             'api-version' => '1.3.0',
             'app-id' => getenv('PAYU_APP_ID'),
@@ -24,9 +26,9 @@ class LaravelPayU
         $this->private_key = getenv('PAYU_PRIVATE_KEY');
     }
 
-    public function createAuthorization(string $paymentId, string $cvv, string $token)
+    public function createAuthorization(string $paymentId, string $cvv, string $token) // string $reconciliation_id
     {
-        $url = "https://api.paymentsos.com/payments/$paymentId/authorizations";
+        $url = "payments/$paymentId/authorizations";
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
@@ -37,14 +39,27 @@ class LaravelPayU
                 'token' => $token,
                 'type' => 'tokenized',
             ],
+            // 'reconciliation_id' => $reconciliation_id
         ];
+        $response = $this->http->post($url, compact('headers', 'json'));
+        return $this->format($response);
+    }
+
+    public function createCapture(string $paymentId, int $amount)
+    {
+        $url = "payments/$paymentId/captures";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $json = compact('amount');
         $response = $this->http->post($url, compact('headers', 'json'));
         return $this->format($response);
     }
 
     public function createCharge(string $paymentId, string $cvv, string $token)
     {
-        $url = "https://api.paymentsos.com/payments/$paymentId/charges";
+        $url = "payments/$paymentId/charges";
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
@@ -60,14 +75,14 @@ class LaravelPayU
         return $this->format($response);
     }
 
-    public function createPayment(int $amount, string $currency)
+    public function createPayment(int $amount, string $currency) // string $statement_soft_descriptor
     {
-        $url = 'https://api.paymentsos.com/payments';
+        $url = 'payments';
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
-        $json = compact('amount', 'currency');
+        $json = compact('amount', 'currency'); // 'statement_soft_descriptor'
         $response = $this->http->post($url, compact('headers', 'json'));
         return $this->format($response);
     }
@@ -80,7 +95,7 @@ class LaravelPayU
         string $token_type
     )
     {
-        $url = 'https://api.paymentsos.com/tokens';
+        $url = 'tokens';
         $headers = array_merge($this->headers, [
             'public_key' => getenv('PAYU_PUBLIC_KEY'),
         ]);
@@ -105,7 +120,7 @@ class LaravelPayU
 
     public function getAuthorization(string $paymentId, string $authorizationid)
     {
-        $url = "https://api.paymentsos.com/payments/$paymentId/authorizations/$authorizationid";
+        $url = "payments/$paymentId/authorizations/$authorizationid";
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
