@@ -27,12 +27,18 @@ class LaravelPayU
         $this->private_key = getenv('PAYU_PRIVATE_KEY');
     }
 
-    private function _format(Response $response)
+    private function _format(Response $response, RequestException $error = null)
     {
-        $guzzleBodyStream = $response->getBody();
-        $json_string = (string) $guzzleBodyStream;
-        $array = json_decode($json_string, true);
-        return $array;
+        $bodyStream = $response->getBody();
+        $bodyString = $bodyStream->getContents();
+        $data = json_decode($bodyString, true);
+        if ($error) {
+            $message = $error->getMessage();
+            return [
+                'error' => compact('message', 'data'),
+            ];
+        }
+        return $data;
     }
 
     public function createAuthorization(
@@ -63,7 +69,8 @@ class LaravelPayU
             $response = $this->http->post($url, compact('headers', 'json'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 
@@ -79,7 +86,8 @@ class LaravelPayU
             $response = $this->http->post($url, compact('headers', 'json'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 
@@ -101,7 +109,8 @@ class LaravelPayU
             $response = $this->http->post($url, compact('headers', 'json'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 
@@ -138,7 +147,8 @@ class LaravelPayU
             $response = $this->http->post($url, compact('headers', 'json'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 
@@ -152,7 +162,8 @@ class LaravelPayU
             $response = $this->http->post($url, compact('headers'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 
@@ -166,7 +177,8 @@ class LaravelPayU
             $response = $this->http->post($url, compact('headers'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 
@@ -193,7 +205,8 @@ class LaravelPayU
             $response = $this->http->post($url, compact('headers', 'json'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 
@@ -208,7 +221,8 @@ class LaravelPayU
             $response = $this->http->get($url, compact('headers'));
             return $this->_format($response);
         } catch (RequestException $e) {
-            return ['error' => $e];
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
         }
     }
 }
