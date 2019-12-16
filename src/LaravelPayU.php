@@ -3,6 +3,7 @@
 namespace SomosGAD_\LaravelPayU;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 
 class LaravelPayU
@@ -24,6 +25,14 @@ class LaravelPayU
             'x-payments-os-env' => getenv('PAYU_ENV'),
         ];
         $this->private_key = getenv('PAYU_PRIVATE_KEY');
+    }
+
+    private function _format(Response $response)
+    {
+        $guzzleBodyStream = $response->getBody();
+        $json_string = (string) $guzzleBodyStream;
+        $array = json_decode($json_string, true);
+        return $array;
     }
 
     public function createAuthorization(
@@ -50,8 +59,12 @@ class LaravelPayU
             ),
             'is_not_null',
         );
-        $response = $this->http->post($url, compact('headers', 'json'));
-        return $this->format($response);
+        try {
+            $response = $this->http->post($url, compact('headers', 'json'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 
     public function createCapture(string $paymentId, int $amount)
@@ -62,8 +75,12 @@ class LaravelPayU
             'private_key' => $this->private_key,
         ]);
         $json = compact('amount');
-        $response = $this->http->post($url, compact('headers', 'json'));
-        return $this->format($response);
+        try {
+            $response = $this->http->post($url, compact('headers', 'json'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 
     public function createCharge(string $paymentId, string $cvv, string $token)
@@ -80,8 +97,12 @@ class LaravelPayU
                 'type' => 'tokenized',
             ],
         ];
-        $response = $this->http->post($url, compact('headers', 'json'));
-        return $this->format($response);
+        try {
+            $response = $this->http->post($url, compact('headers', 'json'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 
     public function createPayment(
@@ -113,8 +134,12 @@ class LaravelPayU
             ),
             'is_not_null',
         );
-        $response = $this->http->post($url, compact('headers', 'json'));
-        return $this->format($response);
+        try {
+            $response = $this->http->post($url, compact('headers', 'json'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 
     public function makeRefund(string $paymentID) {
@@ -123,8 +148,12 @@ class LaravelPayU
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
-        $response = $this->http->post($url, compact('headers'));
-        return $this->format($response);
+        try {
+            $response = $this->http->post($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 
     public function makeVoid(string $paymentID) {
@@ -133,8 +162,12 @@ class LaravelPayU
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
-        $response = $this->http->post($url, compact('headers'));
-        return $this->format($response);
+        try {
+            $response = $this->http->post($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 
     public function createToken(
@@ -156,16 +189,12 @@ class LaravelPayU
             'holder_name',
             'token_type',
         );
-        $response = $this->http->post($url, compact('headers', 'json'));
-        return $this->format($response);
-    }
-
-    private function format(Response $response)
-    {
-        $guzzleBodyStream = $response->getBody();
-        $json_string = (string) $guzzleBodyStream;
-        $array = json_decode($json_string, true);
-        return $array;
+        try {
+            $response = $this->http->post($url, compact('headers', 'json'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 
     public function getAuthorization(string $paymentId, string $authorizationid)
@@ -175,7 +204,11 @@ class LaravelPayU
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
-        $response = $this->http->get($url, compact('headers'));
-        return $this->format($response);
+        try {
+            $response = $this->http->get($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            return ['error' => $e];
+        }
     }
 }
