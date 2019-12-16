@@ -109,7 +109,7 @@ class LaravelPayU
     }
 
     public function makeRefund(string $paymentID) {
-        $url = "https://api.paymentsos.com/payments/${paymentID}/refunds";
+        $url = "payments/${paymentID}/refunds";
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
@@ -119,7 +119,7 @@ class LaravelPayU
     }
 
     public function makeVoid(string $paymentID) {
-        $url = "https://api.paymentsos.com/payments/${paymentID}/refunds";
+        $url = "payments/${paymentID}/voids";
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
