@@ -165,8 +165,7 @@ class LaravelPayUTest extends TestCase
        $this->assertArrayHasKey('id', $output);
        $this->assertArrayHasKey('created', $output);
        $this->assertArrayHasKey('provider_data', $output);
-       $this->assertArrayHasKey('result', $output);
-       $this->assertArrayHasKey('amount', $output);
+       $this->assertArrayHasKey('provider_specific_data', $output);
        $this->assertArrayHasKey('provider_configuration', $output);
     }
 
@@ -266,7 +265,6 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($token['vendor']);
         $this->assertIsString($token['card_type']);
         $this->assertIsString($token['issuer']);
-        $this->assertIsString($token['level']);
         $this->assertIsString($token['country_code']);
         $this->assertIsString($token['holder_name']);
         $this->assertIsString($token['expiration_date']);
