@@ -26,21 +26,30 @@ class LaravelPayU
         $this->private_key = getenv('PAYU_PRIVATE_KEY');
     }
 
-    public function createAuthorization(string $paymentId, string $cvv, string $token) // string $reconciliation_id
+    public function createAuthorization(
+        string $payment_id,
+        string $cvv,
+        string $token,
+        string $reconciliation_id = null
+    )
     {
-        $url = "payments/$paymentId/authorizations";
+        $url = "payments/$payment_id/authorizations";
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
-        $json = [
-            'payment_method' => [
-                'credit_card_cvv' => $cvv,
-                'token' => $token,
-                'type' => 'tokenized',
-            ],
-            // 'reconciliation_id' => $reconciliation_id
+        $payment_method = [
+            'credit_card_cvv' => $cvv,
+            'token' => $token,
+            'type' => 'tokenized',
         ];
+        $json = array_filter(
+            compact(
+                'payment_method',
+                'reconciliation_id',
+            ),
+            'is_not_null',
+        );
         $response = $this->http->post($url, compact('headers', 'json'));
         return $this->format($response);
     }
