@@ -47,6 +47,7 @@ If you discover any security related issues, please email giovanni@somosgad.com 
 - [Somos GAD_][link-author]
 - [Giovanni Pires da Silva][link-giovanni]
 - [Camilo Cunha de Azevedo][link-camilo]
+- [Danner Terra][link-danner]
 - [All Contributors][link-contributors]
 
 ## License
@@ -65,4 +66,5 @@ MIT. Please see the [license file](license.md) for more information.
 [link-author]: https://github.com/somosgad
 [link-giovanni]: https://github.com/giovannipds
 [link-camilo]: https://github.com/Camilotk
+[link-danner]: https://github.com/DannerTerra
 [link-contributors]: ../../contributors
