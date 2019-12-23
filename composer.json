@@ -1,6 +1,6 @@
 {
     "name": "somosgad/laravel-payu",
-    "description": ":description",
+    "description": "A Laravel package to encapsulate global PayU requests",
     "license": "MIT",
     "authors": [
         {
@@ -10,7 +10,8 @@
         },
         {
             "name": "Camilo Cunha de Azevedo",
-            "email": "camilo@somosgad.com"
+            "email": "camilo@somosgad.com",
+            "homepage": "https://somosgad.com"
         }
 
     ],
