@@ -7,7 +7,7 @@ A Laravel package to encapsulate global PayU requests.
 <!-- [![Build Status][ico-travis]][link-travis] -->
 <!-- [![StyleCI][ico-styleci]][link-styleci] -->
 
-<span style="color: red; text-transform: uppercase">**Currently in development**</span>
+**Currently in development**
 
 <!-- Take a look at [contributing.md](contributing.md) to see a to do list. -->
 
