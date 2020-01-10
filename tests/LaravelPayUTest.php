@@ -104,14 +104,11 @@ class LaravelPayUTest extends TestCase
      * Test create charge.
      *
      * @depends testInstance
+     * @depends testCreatePayment
      * @return void
      */
-    public function testCreateCharge(LaravelPayU $payu)
+    public function testCreateCharge(LaravelPayU $payu, array $payment)
     {
-        $amount = 2000;
-        $currency = 'USD';
-        $payment = $payu->createPayment($amount, $currency);
-
         $token = $this->mockToken();
         $charge = $payu->createCharge(
             $payment['id'],
@@ -225,6 +222,8 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($payment['status']);
         $this->assertIsArray($payment['possible_next_actions']);
         $this->assertIsNumeric($payment['amount']);
+
+        return $payment;
     }
 
     /**
