@@ -41,6 +41,7 @@ PAYU_PRIVATE_KEY=68lhkww3-lkgw-4mcc-r21m-cf8nnnx3wj2k
 ```
 
 ## Usage
+
 ```php
 use SomosGAD_\LaravelPayU\LaravelPayU;
 
@@ -48,10 +49,17 @@ $payu = new LaravelPayU;
 ```
 
 ### Create Payment
+
 ```php
 $amount = 2000;
 $currency = 'USD';
 $payment = $payu->createPayment($amount, $currency);
+```
+
+### Create Charge
+
+```php
+$charge = $payu->createCharge($payment['id'], $token);
 ```
 
 <!-- ## Change log

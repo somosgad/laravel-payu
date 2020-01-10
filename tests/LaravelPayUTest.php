@@ -112,8 +112,8 @@ class LaravelPayUTest extends TestCase
         $token = $this->mockToken();
         $charge = $payu->createCharge(
             $payment['id'],
-            $token['encrypted_cvv'],
             $token['token']
+            // $token['encrypted_cvv'],
         );
 
         $this->assertArrayHasKey('id', $charge);
@@ -143,27 +143,25 @@ class LaravelPayUTest extends TestCase
      * to void an authorization.
      *
      * @depends testInstance
+     * @depends testCreatePayment
      * @return void
      */
-    public function testMakeVoid(LaravelPayU $payu)
+    public function testMakeVoid(LaravelPayU $payu, array $payment)
     {
-        $amount = 1203.30;
-        $currency = 'USD';
-        $payment = $payu->createPayment($amount, $currency);
-
         $token = $this->mockToken();
         $charge = $payu->createCharge(
             $payment['id'],
-            $token['encrypted_cvv'],
-            $token['token']
+            $token['token'],
+            $token['encrypted_cvv']
         );
 
        $output = $payu->makeVoid($payment['id']);
-       $this->assertArrayHasKey('id', $output);
-       $this->assertArrayHasKey('created', $output);
-       $this->assertArrayHasKey('provider_data', $output);
-       $this->assertArrayHasKey('provider_specific_data', $output);
-       $this->assertArrayHasKey('provider_configuration', $output);
+
+        $this->assertArrayHasKey('id', $output);
+        $this->assertArrayHasKey('created', $output);
+        $this->assertArrayHasKey('provider_data', $output);
+        $this->assertArrayHasKey('provider_specific_data', $output);
+        $this->assertArrayHasKey('provider_configuration', $output);
     }
 
     /**
@@ -181,18 +179,18 @@ class LaravelPayUTest extends TestCase
         $token = $this->mockToken();
         $charge = $payu->createCharge(
             $payment['id'],
-            $token['encrypted_cvv'],
-            $token['token']
+            $token['token'],
+            $token['encrypted_cvv']
         );
 
-       $output = $payu->makeRefund($payment['id']);
+        $output = $payu->makeRefund($payment['id']);
 
-       $this->assertArrayHasKey('id', $output);
-       $this->assertArrayHasKey('created', $output);
-       $this->assertArrayHasKey('provider_data', $output);
-       $this->assertArrayHasKey('result', $output);
-       $this->assertArrayHasKey('amount', $output);
-       $this->assertArrayHasKey('provider_configuration', $output);
+        $this->assertArrayHasKey('id', $output);
+        $this->assertArrayHasKey('created', $output);
+        $this->assertArrayHasKey('provider_data', $output);
+        $this->assertArrayHasKey('result', $output);
+        $this->assertArrayHasKey('amount', $output);
+        $this->assertArrayHasKey('provider_configuration', $output);
     }
 
     /**
@@ -310,7 +308,9 @@ class LaravelPayUTest extends TestCase
     public function testInstance()
     {
         $payu = new LaravelPayU;
+
         $this->assertInstanceOf(LaravelPayU::class, $payu);
+
         return $payu;
     }
 }

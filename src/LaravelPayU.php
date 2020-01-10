@@ -91,19 +91,23 @@ class LaravelPayU
         }
     }
 
-    public function createCharge(string $paymentId, string $cvv, string $token)
+    public function createCharge(
+        string $paymentId,
+        string $token,
+        string $credit_card_cvv = null
+    )
     {
         $url = "payments/$paymentId/charges";
         $headers = array_merge($this->headers, [
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
+        $type = 'tokenized';
         $json = [
-            'payment_method' => [
-                'credit_card_cvv' => $cvv,
-                'token' => $token,
-                'type' => 'tokenized',
-            ],
+            'payment_method' => array_filter(
+                compact('credit_card_cvv', 'token', 'type'),
+                'is_not_null',
+            ),
         ];
         try {
             $response = $this->http->post($url, compact('headers', 'json'));
