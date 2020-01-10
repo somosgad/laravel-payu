@@ -1,19 +1,19 @@
 # laravel-payu
 
-A Laravel package to encapsulate global PayU requests.
+A Laravel package to encapsulate global PayU requests. More info at [PaymentsOS Docs][link-payudocs].<br>
 
 <!-- [![Latest Version on Packagist][ico-version]][link-packagist] -->
-[![Total Downloads][ico-downloads]][link-downloads]
+[![Total Downloads][ico-downloads]][link-downloads] 
 <!-- [![Build Status][ico-travis]][link-travis] -->
 <!-- [![StyleCI][ico-styleci]][link-styleci] -->
 
 **Currently in development**
 
-<!-- Take a look at [contributing.md](contributing.md) to see a to do list. -->
+<!-- Take a look at [contributing.md][link-contributing] to see a to do list. -->
 
 ## Installation
 
-Via [Composer](https://getcomposer.org/)
+Via [Composer][link-composer]
 
 ``` bash
 composer require somosgad/laravel-payu:dev-master
@@ -54,20 +54,23 @@ $currency = 'USD';
 $payment = $payu->createPayment($amount, $currency);
 ```
 
-## Change log
+<!-- ## Change log
 
-Please see the [changelog](changelog.md) for more information on what has changed recently.
+Please see the [changelog][link-changelog] for more information on what has changed recently. -->
 
 ## Testing
 
+<!-- # $ composer test -->
+
 ``` bash
-$ phpunit
-# $ composer test
+phpunit
 ```
 
 ## Contributing
 
-Please see [contributing.md](contributing.md) for details and a todolist.
+Feel free to contribute with anything on this package or contact us about it.
+
+<!-- Please see [contributing.md][link-contributing] for details and a todolist. -->
 
 ## Security
 
@@ -99,3 +102,7 @@ MIT. Please see the [license file](license.md) for more information.
 [link-camilo]: https://github.com/Camilotk
 [link-danner]: https://github.com/DannerTerra
 [link-contributors]: ../../contributors
+[link-composer]: https://getcomposer.org
+[link-payudocs]: https://developers.paymentsos.com
+[link-changelog]: changelog.md
+[link-contributing]: contributing.md
