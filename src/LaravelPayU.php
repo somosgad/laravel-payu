@@ -130,6 +130,7 @@ class LaravelPayU
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
+        $currency = strtoupper($currency);
         $json = array_filter(
             compact(
                 'amount',

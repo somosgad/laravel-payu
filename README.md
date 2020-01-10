@@ -1,27 +1,58 @@
 # laravel-payu
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
+A Laravel package to encapsulate global PayU requests.
+
+<!-- [![Latest Version on Packagist][ico-version]][link-packagist] -->
 [![Total Downloads][ico-downloads]][link-downloads]
 <!-- [![Build Status][ico-travis]][link-travis] -->
 <!-- [![StyleCI][ico-styleci]][link-styleci] -->
 
-A Laravel package to encapsulate global PayU requests.
+<span style="color: red; text-transform: uppercase">**Currently in development**</span>
 
-**Currently in development**
-
-Take a look at [contributing.md](contributing.md) to see a to do list.
+<!-- Take a look at [contributing.md](contributing.md) to see a to do list. -->
 
 ## Installation
 
 Via [Composer](https://getcomposer.org/)
 
 ``` bash
-$ composer require somosgad/laravel-payu:dev-master
+composer require somosgad/laravel-payu:dev-master
+```
+
+## Configuration
+
+Set your PayU configs at `.env` file
+
+```ini
+PAYU_APP_ID=
+PAYU_ENV=
+PAYU_PUBLIC_KEY=
+PAYU_PRIVATE_KEY=
+```
+
+Your `.env` file must end up looking like:
+
+
+```ini
+PAYU_APP_ID=com.foo.bar
+PAYU_ENV=test
+PAYU_PUBLIC_KEY=g6l2g4yn-nvgp-uiil-6fm7-d2337cegunmz
+PAYU_PRIVATE_KEY=68lhkww3-lkgw-4mcc-r21m-cf8nnnx3wj2k
 ```
 
 ## Usage
+```php
+use SomosGAD_\LaravelPayU\LaravelPayU;
 
-To do.
+$payu = new LaravelPayU;
+```
+
+### Create Payment
+```php
+$amount = 2000;
+$currency = 'USD';
+$payment = $payu->createPayment($amount, $currency);
+```
 
 ## Change log
 
