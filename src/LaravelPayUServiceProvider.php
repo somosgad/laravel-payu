@@ -59,7 +59,7 @@ class LaravelPayUServiceProvider extends ServiceProvider
         // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/payu.php' => config_path('payu.php'),
-        ], 'laravel-payu.config');
+        ], 'laravel-payu');
 
         // Publishing the views.
         /*$this->publishes([
