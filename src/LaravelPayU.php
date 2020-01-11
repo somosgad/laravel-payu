@@ -118,6 +118,11 @@ class LaravelPayU
         }
     }
 
+    /**
+     * Create a payment
+     *
+     * @return array
+     */
     public function createPayment(
         int $amount,
         string $currency,
