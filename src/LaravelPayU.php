@@ -134,7 +134,7 @@ class LaravelPayU
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
-        $double_amounts = config('payu.double_amounts');
+        $double_amounts = config('laravel-payu.double_amounts');
         if ($double_amounts) {
             $amount = $amount * 100;
         }
