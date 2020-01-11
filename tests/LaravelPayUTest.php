@@ -2,7 +2,6 @@
 
 namespace SomosGAD_\LaravelPayU\Tests;
 
-use SomosGAD_\LaravelPayU\TestCase;
 use SomosGAD_\LaravelPayU\LaravelPayU;
 
 class LaravelPayUTest extends TestCase

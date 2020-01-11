@@ -31,7 +31,9 @@ class LaravelPayUServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/payu.php', 'laravel-payu');
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/payu.php', 'laravel-payu'
+        );
 
         // Register the service the package provides.
         $this->app->singleton('laravel-payu', function ($app) {
@@ -59,7 +61,7 @@ class LaravelPayUServiceProvider extends ServiceProvider
         // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/payu.php' => config_path('payu.php'),
-        ], 'laravel-payu');
+        ]);
 
         // Publishing the views.
         /*$this->publishes([

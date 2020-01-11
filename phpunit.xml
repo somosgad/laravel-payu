@@ -11,13 +11,13 @@
          stopOnFailure="false"
          printerClass="Sempro\PHPUnitPrettyPrinter\PrettyPrinter">
     <testsuites>
-        <testsuite name="Package">
-            <directory suffix=".php">./tests/</directory>
+        <testsuite name="LaravelPayU">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory>src/</directory>
+            <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
     <php>

@@ -15,11 +15,13 @@ A Laravel package to encapsulate global PayU requests. More info at [PaymentsOS 
 
 Via [Composer][link-composer]
 
-``` bash
+```bash
 composer require somosgad/laravel-payu:dev-master
 ```
 
 ## Configuration
+
+### Set API variables
 
 Set your PayU configs at `.env` file
 
@@ -38,6 +40,12 @@ PAYU_APP_ID=com.foo.bar
 PAYU_ENV=test
 PAYU_PUBLIC_KEY=g6l2g4yn-nvgp-uiil-6fm7-d2337cegunmz
 PAYU_PRIVATE_KEY=68lhkww3-lkgw-4mcc-r21m-cf8nnnx3wj2k
+```
+
+### Export Config
+
+```bash
+php artisan vendor:publish --provider="SomosGAD_\LaravelPayU\LaravelPayUServiceProvider"
 ```
 
 ## Usage

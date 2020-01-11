@@ -134,6 +134,10 @@ class LaravelPayU
             'idempotency_key' => rand(),
             'private_key' => $this->private_key,
         ]);
+        $double_amounts = config('payu.double_amounts');
+        if ($double_amounts) {
+            $amount = $amount * 100;
+        }
         $currency = strtoupper($currency);
         $json = array_filter(
             compact(
