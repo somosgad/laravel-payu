@@ -23,7 +23,7 @@
     "homepage": "https://github.com/somosgad/laravel-payu",
     "keywords": ["Laravel", "LaravelPayU"],
     "require": {
-        "guzzlehttp/guzzle": "6.3",
+        "guzzlehttp/guzzle": "^6.3 <=6.5.0",
         "illuminate/support": "^6.0"
     },
     "require-dev": {
