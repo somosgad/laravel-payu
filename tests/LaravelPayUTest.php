@@ -48,6 +48,8 @@ class LaravelPayUTest extends TestCase
             $token['token']
         );
 
+        $this->assertIsArray($authorization);
+
         $this->assertArrayHasKey('id', $authorization);
         $this->assertArrayHasKey('created', $authorization);
         $this->assertArrayHasKey('provider_specific_data', $authorization);
@@ -84,6 +86,8 @@ class LaravelPayUTest extends TestCase
             $data['payment']['amount'],
         );
 
+        $this->assertIsArray($capture);
+
         $this->assertArrayHasKey('id', $capture);
         $this->assertArrayHasKey('created', $capture);
         $this->assertArrayHasKey('result', $capture);
@@ -114,6 +118,8 @@ class LaravelPayUTest extends TestCase
             $token['token']
             // $token['encrypted_cvv'],
         );
+
+        $this->assertIsArray($charge);
 
         $this->assertArrayHasKey('id', $charge);
         $this->assertArrayHasKey('created', $charge);
@@ -151,6 +157,8 @@ class LaravelPayUTest extends TestCase
             $email
         );
 
+        $this->assertIsArray($customer);
+
         $this->assertArrayHasKey('id', $customer);
         $this->assertArrayHasKey('created', $customer);
         $this->assertArrayHasKey('modified', $customer);
@@ -171,12 +179,14 @@ class LaravelPayUTest extends TestCase
      *
      * @depends testInstance
      * @depends testGetCustomerById
+     * @depends testGetCustomerByReference
      * @depends testCreatePaymentMethod
      * @return void
      */
     public function testDeleteCustomer(
         LaravelPayU $payu,
         array $customer,
+        array $customer_by_reference,
         array $payment_method
     )
     {
@@ -203,7 +213,9 @@ class LaravelPayUTest extends TestCase
             $token['encrypted_cvv']
         );
 
-       $output = $payu->makeVoid($payment['id']);
+        $output = $payu->makeVoid($payment['id']);
+
+        $this->assertIsArray($output);
 
         $this->assertArrayHasKey('id', $output);
         $this->assertArrayHasKey('created', $output);
@@ -233,6 +245,8 @@ class LaravelPayUTest extends TestCase
 
         $output = $payu->makeRefund($payment['id']);
 
+        $this->assertIsArray($output);
+
         $this->assertArrayHasKey('id', $output);
         $this->assertArrayHasKey('created', $output);
         $this->assertArrayHasKey('provider_data', $output);
@@ -252,6 +266,8 @@ class LaravelPayUTest extends TestCase
         $amount = 2000;
         $currency = 'USD';
         $payment = $payu->createPayment($amount, $currency);
+
+        $this->assertIsArray($payment);
 
         $this->assertArrayHasKey('id', $payment);
         $this->assertArrayHasKey('currency', $payment);
@@ -283,6 +299,8 @@ class LaravelPayUTest extends TestCase
     {
         $token = $this->mockToken();
         $payment_method = $payu->createPaymentMethod($customer['id'], $token['token']);
+
+        $this->assertIsArray($payment_method);
 
         $this->assertArrayHasKey('type', $payment_method);
         $this->assertArrayHasKey('token', $payment_method);
@@ -335,6 +353,8 @@ class LaravelPayUTest extends TestCase
     {
         $token = $this->mockToken();
 
+        $this->assertIsArray($token);
+
         $this->assertArrayHasKey('token', $token);
         $this->assertArrayHasKey('created', $token);
         $this->assertArrayHasKey('pass_luhn_validation', $token);
@@ -382,6 +402,8 @@ class LaravelPayUTest extends TestCase
             $data['authorization']['id']
         );
 
+        $this->assertIsArray($authorization);
+
         $this->assertArrayHasKey('id', $authorization);
         $this->assertArrayHasKey('created', $authorization);
         $this->assertArrayHasKey('payment_method', $authorization);
@@ -412,6 +434,8 @@ class LaravelPayUTest extends TestCase
     {
         $customer = $payu->getCustomerById($customer['id']);
 
+        $this->assertIsArray($customer);
+
         $this->assertArrayHasKey('id', $customer);
         $this->assertArrayHasKey('created', $customer);
         $this->assertArrayHasKey('modified', $customer);
@@ -425,6 +449,38 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($customer['email']);
 
         return $customer;
+    }
+
+    /**
+     * Test get customer.
+     *
+     * @depends testInstance
+     * @depends testGetCustomerById
+     * @return void
+     */
+    public function testGetCustomerByReference(LaravelPayU $payu, array $customer)
+    {
+        $customers = $payu->getCustomerByReference($customer['customer_reference']);
+
+        $this->assertIsArray($customers);
+
+        $this->assertCount(1, $customers);
+
+        $this->assertIsArray($customers[0]);
+
+        $this->assertArrayHasKey('id', $customers[0]);
+        $this->assertArrayHasKey('created', $customers[0]);
+        $this->assertArrayHasKey('modified', $customers[0]);
+        $this->assertArrayHasKey('customer_reference', $customers[0]);
+        $this->assertArrayHasKey('email', $customers[0]);
+
+        $this->assertIsString($customers[0]['id']);
+        $this->assertIsNumeric($customers[0]['created']);
+        $this->assertIsNumeric($customers[0]['modified']);
+        $this->assertIsString($customers[0]['customer_reference']);
+        $this->assertIsString($customers[0]['email']);
+
+        return $customers[0];
     }
 
     /**
