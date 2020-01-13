@@ -159,7 +159,7 @@ class LaravelPayU
                             'cookie' => $cookie,
                             'customer_national_identify_number' => $customer_national_identify_number,
                             'payer_email' => 'John.Doe@email.com',
-                            'payment_country' => 'ARG',
+                            'payment_country' => 'ARG', // required not listed at docs
                         ],
                         'device_fingerprint' => [
                             'fingerprint' => $device_fingerprint,
