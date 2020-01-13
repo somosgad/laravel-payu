@@ -41,6 +41,11 @@ class LaravelPayU
         return $data;
     }
 
+    /**
+     * Create customer
+     *
+     * @return array
+     */
     public function createAuthorization(
         string $payment_id,
         string $cvv,
@@ -192,6 +197,30 @@ class LaravelPayU
     }
 
     /**
+     * Create payment method
+     *
+     * @return array
+     */
+    public function createPaymentMethod(
+        string $customer_id,
+        string $token
+    )
+    {
+        $url = "customers/${customer_id}/payment-methods/${token}";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->post($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    /**
      * Delete customer
      *
      * @return boolean
@@ -242,6 +271,11 @@ class LaravelPayU
         }
     }
 
+    /**
+     * Create token
+     *
+     * @return array
+     */
     public function createToken(
         string $card_number,
         string $credit_card_cvv,
