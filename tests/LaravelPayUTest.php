@@ -136,6 +136,50 @@ class LaravelPayUTest extends TestCase
         $this->assertEqualsIgnoringCase('Captured.', $charge['provider_data']['description']);
     }
 
+    /**
+     * Test create customer
+     *
+     * @depends testInstance
+     * @return array
+     */
+    public function testCreateCustomer(LaravelPayU $payu)
+    {
+        $customer_reference = 'johntravolta18021954';
+        $email = 'john@travolta.com';
+        $customer = $payu->createCustomer(
+            $customer_reference,
+            $email
+        );
+
+        $this->assertArrayHasKey('id', $customer);
+        $this->assertArrayHasKey('created', $customer);
+        $this->assertArrayHasKey('modified', $customer);
+        $this->assertArrayHasKey('customer_reference', $customer);
+        $this->assertArrayHasKey('email', $customer);
+
+        $this->assertIsString($customer['id']);
+        $this->assertIsNumeric($customer['created']);
+        $this->assertIsNumeric($customer['modified']);
+        $this->assertIsString($customer['customer_reference']);
+        $this->assertIsString($customer['email']);
+
+        return $customer;
+    }
+
+    /**
+     * Test delete customer
+     *
+     * @depends testInstance
+     * @depends testCreateCustomer
+     * @return void
+     */
+    public function testDeleteCustomer(LaravelPayU $payu, array $customer)
+    {
+        $delete = $payu->deleteCustomer($customer['id']);
+
+        $this->assertIsBool($delete);
+    }
+
      /**
      * Test Void. a void cancels an operation (such as an authorization or
      * capture), before it has been finalized. The most common procedure is

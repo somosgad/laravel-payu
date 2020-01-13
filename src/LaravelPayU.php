@@ -119,6 +119,31 @@ class LaravelPayU
     }
 
     /**
+     * Create customer
+     *
+     * @return array
+     */
+    public function createCustomer(
+        string $customer_reference,
+        string $email
+    )
+    {
+        $url = "customers";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $json = compact('customer_reference', 'email');
+        try {
+            $response = $this->http->post($url, compact('headers', 'json'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    /**
      * Create a payment
      *
      * @return array
@@ -163,6 +188,27 @@ class LaravelPayU
         } catch (RequestException $e) {
             $response = $e->getResponse();
             return $this->_format($response, $e);
+        }
+    }
+
+    /**
+     * Delete customer
+     *
+     * @return boolean
+     */
+    public function deleteCustomer(string $customer_id)
+    {
+        $url = "customers/{$customer_id}";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->delete($url, compact('headers'));
+            $status = $response->getStatusCode();
+            return $status === 204 ? true : false;
+        } catch (RequestException $e) {
+            return false;
         }
     }
 
