@@ -170,10 +170,15 @@ class LaravelPayUTest extends TestCase
      * Test delete customer
      *
      * @depends testInstance
-     * @depends testCreateCustomer
+     * @depends testGetCustomerById
+     * @depends testCreatePaymentMethod
      * @return void
      */
-    public function testDeleteCustomer(LaravelPayU $payu, array $customer)
+    public function testDeleteCustomer(
+        LaravelPayU $payu,
+        array $customer,
+        array $payment_method
+    )
     {
         $delete = $payu->deleteCustomer($customer['id']);
 
@@ -268,6 +273,59 @@ class LaravelPayUTest extends TestCase
     }
 
     /**
+     * Test create payment.
+     *
+     * @depends testInstance
+     * @depends testGetCustomerById
+     * @return void
+     */
+    public function testCreatePaymentMethod(LaravelPayU $payu, array $customer)
+    {
+        $token = $this->mockToken();
+        $payment_method = $payu->createPaymentMethod($customer['id'], $token['token']);
+
+        $this->assertArrayHasKey('type', $payment_method);
+        $this->assertArrayHasKey('token', $payment_method);
+        $this->assertArrayHasKey('token_type', $payment_method);
+        $this->assertArrayHasKey('fingerprint', $payment_method);
+        $this->assertArrayHasKey('state', $payment_method);
+        $this->assertArrayHasKey('holder_name', $payment_method);
+        $this->assertArrayHasKey('expiration_date', $payment_method);
+        $this->assertArrayHasKey('last_4_digits', $payment_method);
+        $this->assertArrayHasKey('pass_luhn_validation', $payment_method);
+        $this->assertArrayHasKey('vendor', $payment_method);
+        $this->assertArrayHasKey('created', $payment_method);
+        $this->assertArrayHasKey('bin_number', $payment_method);
+        $this->assertArrayHasKey('issuer', $payment_method);
+        $this->assertArrayHasKey('card_type', $payment_method);
+        $this->assertArrayHasKey('level', $payment_method);
+        $this->assertArrayHasKey('country_code', $payment_method);
+        $this->assertArrayHasKey('href', $payment_method);
+        $this->assertArrayHasKey('customer', $payment_method);
+
+        $this->assertIsString($payment_method['type']);
+        $this->assertIsString($payment_method['token']);
+        $this->assertIsString($payment_method['token_type']);
+        $this->assertIsString($payment_method['fingerprint']);
+        $this->assertIsString($payment_method['state']);
+        $this->assertIsString($payment_method['holder_name']);
+        $this->assertIsString($payment_method['expiration_date']);
+        $this->assertIsNumeric($payment_method['last_4_digits']);
+        $this->assertIsBool($payment_method['pass_luhn_validation']);
+        $this->assertIsString($payment_method['vendor']);
+        $this->assertIsNumeric($payment_method['created']);
+        $this->assertIsNumeric($payment_method['bin_number']);
+        $this->assertIsString($payment_method['issuer']);
+        $this->assertIsString($payment_method['card_type']);
+        $this->assertIsString($payment_method['level']);
+        $this->assertIsString($payment_method['country_code']);
+        $this->assertIsString($payment_method['href']);
+        $this->assertIsString($payment_method['customer']);
+
+        return $payment_method;
+    }
+
+    /**
      * Test create token.
      *
      * @depends testInstance
@@ -341,6 +399,32 @@ class LaravelPayUTest extends TestCase
         $this->assertIsArray($authorization['provider_configuration']);
 
         $this->assertEqualsIgnoringCase('Authorized.', $authorization['provider_data']['description']);
+    }
+
+    /**
+     * Test get customer.
+     *
+     * @depends testInstance
+     * @depends testCreateCustomer
+     * @return void
+     */
+    public function testGetCustomerById(LaravelPayU $payu, array $customer)
+    {
+        $customer = $payu->getCustomerById($customer['id']);
+
+        $this->assertArrayHasKey('id', $customer);
+        $this->assertArrayHasKey('created', $customer);
+        $this->assertArrayHasKey('modified', $customer);
+        $this->assertArrayHasKey('customer_reference', $customer);
+        $this->assertArrayHasKey('email', $customer);
+
+        $this->assertIsString($customer['id']);
+        $this->assertIsNumeric($customer['created']);
+        $this->assertIsNumeric($customer['modified']);
+        $this->assertIsString($customer['customer_reference']);
+        $this->assertIsString($customer['email']);
+
+        return $customer;
     }
 
     /**

@@ -241,6 +241,49 @@ class LaravelPayU
         }
     }
 
+    /**
+     * Get customer by id
+     *
+     * @return array
+     */
+    public function getCustomerById(string $customer_id)
+    {
+        $url = "customers/{$customer_id}";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->get($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    /**
+     * Get customer by reference
+     *
+     * @return array
+     */
+    public function getCustomerByReference(string $customer_reference)
+    {
+        $url = "customers";
+        $headers = array_merge($this->headers, [
+            'idempotency_key' => rand(),
+            'private_key' => $this->private_key,
+        ]);
+        $query = compact('customer_reference');
+        try {
+            $response = $this->http->get($url, compact('headers', 'query'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
     public function makeRefund(string $paymentID) {
         $url = "payments/${paymentID}/refunds";
         $headers = array_merge($this->headers, [
