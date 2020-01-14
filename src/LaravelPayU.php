@@ -13,6 +13,8 @@ class LaravelPayU
     private $headers;
     private $private_key;
     private $provider;
+    private $customer_device;
+    private $zooz_request_id;
 
     public function __construct()
     {
@@ -28,6 +30,8 @@ class LaravelPayU
         ];
         $this->private_key = env('PAYU_PRIVATE_KEY');
         $this->provider = env('PAYU_PROVIDER');
+        $this->customer_device = config('laravel-payu.customer_device');
+        $this->zooz_request_id = config('laravel-payu.zooz_request_id');
     }
 
     private function _format(Response $response, RequestException $error = null)
@@ -35,6 +39,9 @@ class LaravelPayU
         $bodyStream = $response->getBody();
         $bodyString = $bodyStream->getContents();
         $data = json_decode($bodyString, true);
+        if ($this->zooz_request_id && $response->hasHeader('x-zooz-request-id')) {
+            $data['x-zooz-request-id'] = $response->getHeader('x-zooz-request-id');
+        }
         if ($error) {
             $message = $error->getMessage();
             return [
@@ -70,8 +77,7 @@ class LaravelPayU
      */
     private function _checkCustomerDevice($headers)
     {
-        $customer_device = config('laravel-payu.customer_device');
-        if ($customer_device) {
+        if ($this->customer_device) {
             $request = request();
             $headers = array_merge($headers, [
                 'x-client-ip-address' => $request->ip(),
