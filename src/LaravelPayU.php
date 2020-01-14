@@ -25,14 +25,15 @@ class LaravelPayU
             'api-version' => '1.3.0',
             /* content type is auto-added by guzzle */
             // 'Content-Type' => 'application/json',
-            'x-payments-os-env' => env('PAYU_ENV'),
+            'x-payments-os-env' => env('PAYU_ENV', 'test'),
         ];
         $this->app_id = env('PAYU_APP_ID');
         $this->private_key = env('PAYU_PRIVATE_KEY');
         $this->provider = env('PAYU_PROVIDER');
-        $this->customer_device = config('laravel-payu.customer_device');
-        $this->timeout = config('laravel-payu.timeout');
-        $this->zooz_request_id = config('laravel-payu.zooz_request_id');
+        $this->customer_device = config('laravel-payu.customer_device', false);
+        $this->double_amounts = config('laravel-payu.double_amounts', false);
+        $this->timeout = config('laravel-payu.timeout', 60);
+        $this->zooz_request_id = config('laravel-payu.zooz_request_id', false);
     }
 
     /**
@@ -261,8 +262,7 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
-        $double_amounts = config('laravel-payu.double_amounts');
-        if ($double_amounts) {
+        if ($this->double_amounts) {
             $amount = $amount * 100;
         }
         $currency = strtoupper($currency);
