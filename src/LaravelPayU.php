@@ -23,15 +23,32 @@ class LaravelPayU
         ]);
         $this->headers = [
             'api-version' => '1.3.0',
-            'app-id' => env('PAYU_APP_ID'),
             /* content type is auto-added by guzzle */
             // 'Content-Type' => 'application/json',
             'x-payments-os-env' => env('PAYU_ENV'),
         ];
+        $this->app_id = env('PAYU_APP_ID');
         $this->private_key = env('PAYU_PRIVATE_KEY');
         $this->provider = env('PAYU_PROVIDER');
         $this->customer_device = config('laravel-payu.customer_device');
         $this->zooz_request_id = config('laravel-payu.zooz_request_id');
+    }
+
+    /**
+     * Check if it needs to add the customer device information to the headers.
+     *
+     * @return array
+     */
+    private function _checkCustomerDevice($headers)
+    {
+        if ($this->customer_device) {
+            $request = request();
+            $headers = array_merge($headers, [
+                'x-client-ip-address' => $request->ip(),
+                'x-client-user-agent' => $request->header('User-Agent'),
+            ]);
+        }
+        return $headers;
     }
 
     private function _format(Response $response, RequestException $error = null)
@@ -71,23 +88,6 @@ class LaravelPayU
     }
 
     /**
-     * Check if it needs to add the customer device information to the headers.
-     *
-     * @return array
-     */
-    private function _checkCustomerDevice($headers)
-    {
-        if ($this->customer_device) {
-            $request = request();
-            $headers = array_merge($headers, [
-                'x-client-ip-address' => $request->ip(),
-                'x-client-user-agent' => $request->header('User-Agent'),
-            ]);
-        }
-        return $headers;
-    }
-
-    /**
      * Create customer.
      *
      * @return array
@@ -101,6 +101,7 @@ class LaravelPayU
     {
         $url = "payments/$payment_id/authorizations";
         $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
@@ -130,6 +131,7 @@ class LaravelPayU
     {
         $url = "payments/$paymentId/captures";
         $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
@@ -156,6 +158,7 @@ class LaravelPayU
     {
         $url = "payments/$paymentId/charges";
         $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
@@ -217,6 +220,7 @@ class LaravelPayU
     {
         $url = "customers";
         $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
@@ -248,6 +252,7 @@ class LaravelPayU
     {
         $url = 'payments';
         $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
@@ -290,121 +295,7 @@ class LaravelPayU
     {
         $url = "customers/${customer_id}/payment-methods/${token}";
         $headers = array_merge($this->headers, [
-            'idempotency-key' => $this->_idemPotencyKey(),
-            'private-key' => $this->private_key,
-        ]);
-        try {
-            $response = $this->http->post($url, compact('headers'));
-            return $this->_format($response);
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            return $this->_format($response, $e);
-        }
-    }
-
-    /**
-     * Delete customer
-     *
-     * @return boolean
-     */
-    public function deleteCustomer(string $customer_id)
-    {
-        $url = "customers/{$customer_id}";
-        $headers = array_merge($this->headers, [
-            'idempotency-key' => $this->_idemPotencyKey(),
-            'private-key' => $this->private_key,
-        ]);
-        try {
-            $response = $this->http->delete($url, compact('headers'));
-            $status = $response->getStatusCode();
-            return $status === 204 ? true : false;
-        } catch (RequestException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Get customer by id
-     *
-     * @return array
-     */
-    public function getCustomerById(string $customer_id)
-    {
-        $url = "customers/{$customer_id}";
-        $headers = array_merge($this->headers, [
-            'idempotency-key' => $this->_idemPotencyKey(),
-            'private-key' => $this->private_key,
-        ]);
-        try {
-            $response = $this->http->get($url, compact('headers'));
-            return $this->_format($response);
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            return $this->_format($response, $e);
-        }
-    }
-
-    /**
-     * Get customer by reference
-     *
-     * @return array
-     */
-    public function getCustomerByReference(string $customer_reference)
-    {
-        $url = "customers";
-        $headers = array_merge($this->headers, [
-            'idempotency-key' => $this->_idemPotencyKey(),
-            'private-key' => $this->private_key,
-        ]);
-        $query = compact('customer_reference');
-        try {
-            $response = $this->http->get($url, compact('headers', 'query'));
-            return $this->_format($response);
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            return $this->_format($response, $e);
-        }
-    }
-
-    /**
-     * Get all supported payment methods
-     *
-     * @return array
-     */
-    public function getSupportedPaymentMethods()
-    {
-        $url = "supported-payment-methods";
-        $headers = array_merge($this->headers, [
-            'idempotency-key' => $this->_idemPotencyKey(),
-            'private-key' => $this->private_key,
-        ]);
-        try {
-            $response = $this->http->get($url, compact('headers'));
-            return $this->_format($response);
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            return $this->_format($response, $e);
-        }
-    }
-
-    public function makeRefund(string $paymentID) {
-        $url = "payments/${paymentID}/refunds";
-        $headers = array_merge($this->headers, [
-            'idempotency-key' => $this->_idemPotencyKey(),
-            'private-key' => $this->private_key,
-        ]);
-        try {
-            $response = $this->http->post($url, compact('headers'));
-            return $this->_format($response);
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            return $this->_format($response, $e);
-        }
-    }
-
-    public function makeVoid(string $paymentID) {
-        $url = "payments/${paymentID}/voids";
-        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
@@ -450,15 +341,137 @@ class LaravelPayU
         }
     }
 
+    /**
+     * Delete customer
+     *
+     * @return boolean
+     */
+    public function deleteCustomer(string $customer_id)
+    {
+        $url = "customers/{$customer_id}";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->delete($url, compact('headers'));
+            $status = $response->getStatusCode();
+            return $status === 204 ? true : false;
+        } catch (RequestException $e) {
+            return false;
+        }
+    }
+
     public function getAuthorization(string $paymentId, string $authorizationid)
     {
         $url = "payments/$paymentId/authorizations/$authorizationid";
         $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
         try {
             $response = $this->http->get($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    /**
+     * Get customer by id
+     *
+     * @return array
+     */
+    public function getCustomerById(string $customer_id)
+    {
+        $url = "customers/{$customer_id}";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->get($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    /**
+     * Get customer by reference
+     *
+     * @return array
+     */
+    public function getCustomerByReference(string $customer_reference)
+    {
+        $url = "customers";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        $query = compact('customer_reference');
+        try {
+            $response = $this->http->get($url, compact('headers', 'query'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    /**
+     * Get all supported payment methods
+     *
+     * @return array
+     */
+    public function getSupportedPaymentMethods()
+    {
+        $url = "supported-payment-methods";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->get($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    public function makeRefund(string $paymentID) {
+        $url = "payments/${paymentID}/refunds";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->post($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    public function makeVoid(string $paymentID) {
+        $url = "payments/${paymentID}/voids";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->post($url, compact('headers'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
