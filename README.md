@@ -30,6 +30,7 @@ PAYU_APP_ID=
 PAYU_ENV=
 PAYU_PUBLIC_KEY=
 PAYU_PRIVATE_KEY=
+PAYU_PROVIDER=
 ```
 
 Your `.env` file must end up looking like:
@@ -40,6 +41,7 @@ PAYU_APP_ID=com.foo.bar
 PAYU_ENV=test
 PAYU_PUBLIC_KEY=g6l2g4yn-nvgp-uiil-6fm7-d2337cegunmz
 PAYU_PRIVATE_KEY=68lhkww3-lkgw-4mcc-r21m-cf8nnnx3wj2k
+PAYU_PROVIDER="PayU Argentina"
 ```
 
 ### Export Config
