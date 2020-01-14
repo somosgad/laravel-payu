@@ -363,6 +363,13 @@ class LaravelPayU
         }
     }
 
+    /**
+     * To do.
+     *
+     */
+    public function getAPIKeys() {
+    }
+
     public function getAuthorization(string $paymentId, string $authorizationid)
     {
         $url = "payments/$paymentId/authorizations/$authorizationid";
@@ -426,7 +433,7 @@ class LaravelPayU
     }
 
     /**
-     * Get all supported payment methods
+     * Get all supported payment methods.
      *
      * @return array
      */
@@ -477,5 +484,12 @@ class LaravelPayU
             $response = $e->getResponse();
             return $this->_format($response, $e);
         }
+    }
+
+    /**
+     * To do.
+     *
+     */
+    public function replaceAPIKey() {
     }
 }
