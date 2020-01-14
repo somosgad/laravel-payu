@@ -347,7 +347,7 @@ class LaravelPayUTest extends TestCase
      * Test create token.
      *
      * @depends testInstance
-     * @return void
+     * @return array
      */
     public function testCreateToken(LaravelPayU $payu)
     {
@@ -387,6 +387,8 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($token['holder_name']);
         $this->assertIsString($token['expiration_date']);
         $this->assertIsNumeric($token['last_4_digits']);
+
+        return $token;
     }
 
     /**
@@ -481,6 +483,53 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($customers[0]['email']);
 
         return $customers[0];
+    }
+
+    /**
+     * Test get token.
+     *
+     * @depends testInstance
+     * @depends testCreateToken
+     * @return array
+     */
+    public function testGetToken(LaravelPayU $payu, array $token)
+    {
+        $token = $payu->getToken($token['token']);
+
+        $this->assertIsArray($token);
+
+        $this->assertArrayHasKey('token', $token);
+        $this->assertArrayHasKey('created', $token);
+        $this->assertArrayHasKey('pass_luhn_validation', $token);
+        // $this->assertArrayHasKey('encrypted_cvv', $token);
+        $this->assertArrayHasKey('token_type', $token);
+        $this->assertArrayHasKey('type', $token);
+        $this->assertArrayHasKey('state', $token);
+        $this->assertArrayHasKey('bin_number', $token);
+        $this->assertArrayHasKey('vendor', $token);
+        $this->assertArrayHasKey('card_type', $token);
+        $this->assertArrayHasKey('issuer', $token);
+        $this->assertArrayHasKey('level', $token);
+        $this->assertArrayHasKey('country_code', $token);
+        $this->assertArrayHasKey('holder_name', $token);
+        $this->assertArrayHasKey('expiration_date', $token);
+        $this->assertArrayHasKey('last_4_digits', $token);
+
+        $this->assertIsString($token['token']);
+        $this->assertIsNumeric($token['created']);
+        $this->assertIsBool($token['pass_luhn_validation']);
+        // $this->assertIsString($token['encrypted_cvv']);
+        $this->assertIsString($token['token_type']);
+        $this->assertIsString($token['type']);
+        $this->assertIsString($token['state']);
+        $this->assertIsNumeric($token['bin_number']);
+        $this->assertIsString($token['vendor']);
+        $this->assertIsString($token['card_type']);
+        $this->assertIsString($token['issuer']);
+        $this->assertIsString($token['country_code']);
+        $this->assertIsString($token['holder_name']);
+        $this->assertIsString($token['expiration_date']);
+        $this->assertIsNumeric($token['last_4_digits']);
     }
 
     /**

@@ -454,6 +454,28 @@ class LaravelPayU
         }
     }
 
+    /**
+     * Get a token.
+     *
+     * @return array
+     */
+    public function getToken(string $token)
+    {
+        $url = "tokens/${token}";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        try {
+            $response = $this->http->get($url, compact('headers'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
     public function makeRefund(string $paymentID) {
         $url = "payments/${paymentID}/refunds";
         $headers = array_merge($this->headers, [
