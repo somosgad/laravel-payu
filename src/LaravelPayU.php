@@ -64,6 +64,24 @@ class LaravelPayU
     }
 
     /**
+     * Check if it needs to add the customer device information to the headers.
+     *
+     * @return array
+     */
+    private function _checkCustomerDevice($headers)
+    {
+        $customer_device = config('laravel-payu.customer_device');
+        if ($customer_device) {
+            $request = request();
+            $headers = array_merge($headers, [
+                'x-client-ip-address' => $request->ip(),
+                'x-client-user-agent' => $request->header('User-Agent'),
+            ]);
+        }
+        return $headers;
+    }
+
+    /**
      * Create customer.
      *
      * @return array
@@ -80,6 +98,7 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $headers = $this->_checkCustomerDevice($headers);
         $payment_method = [
             'credit_card_cvv' => $cvv,
             'token' => $token,
@@ -134,6 +153,7 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $headers = $this->_checkCustomerDevice($headers);
         $type = 'tokenized';
         $json = [
             'payment_method' => array_filter(
