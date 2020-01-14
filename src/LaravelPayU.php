@@ -31,6 +31,7 @@ class LaravelPayU
         $this->private_key = env('PAYU_PRIVATE_KEY');
         $this->provider = env('PAYU_PROVIDER');
         $this->customer_device = config('laravel-payu.customer_device');
+        $this->timeout = config('laravel-payu.timeout');
         $this->zooz_request_id = config('laravel-payu.zooz_request_id');
     }
 
@@ -118,8 +119,9 @@ class LaravelPayU
             ),
             'is_not_null',
         );
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers', 'json'));
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -136,8 +138,9 @@ class LaravelPayU
             'private-key' => $this->private_key,
         ]);
         $json = compact('amount');
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers', 'json'));
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -199,8 +202,9 @@ class LaravelPayU
                 'reconciliation_id' => $this->_reconciliationId(),
             ]);
         }
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers', 'json'));
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -225,8 +229,9 @@ class LaravelPayU
             'private-key' => $this->private_key,
         ]);
         $json = compact('customer_reference', 'email');
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers', 'json'));
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -274,8 +279,9 @@ class LaravelPayU
             ),
             'is_not_null',
         );
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers', 'json'));
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -299,8 +305,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers'));
+            $response = $this->http->post($url, compact('headers', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -332,8 +339,9 @@ class LaravelPayU
             'holder_name',
             'token_type',
         );
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers', 'json'));
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -354,8 +362,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->delete($url, compact('headers'));
+            $response = $this->http->delete($url, compact('headers', 'timeout'));
             $status = $response->getStatusCode();
             return $status === 204 ? true : false;
         } catch (RequestException $e) {
@@ -378,8 +387,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->get($url, compact('headers'));
+            $response = $this->http->get($url, compact('headers', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -400,8 +410,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->get($url, compact('headers'));
+            $response = $this->http->get($url, compact('headers', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -423,8 +434,9 @@ class LaravelPayU
             'private-key' => $this->private_key,
         ]);
         $query = compact('customer_reference');
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->get($url, compact('headers', 'query'));
+            $response = $this->http->get($url, compact('headers', 'query', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -445,8 +457,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->get($url, compact('headers'));
+            $response = $this->http->get($url, compact('headers', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -467,8 +480,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->get($url, compact('headers'));
+            $response = $this->http->get($url, compact('headers', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -483,8 +497,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers'));
+            $response = $this->http->post($url, compact('headers', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -499,8 +514,9 @@ class LaravelPayU
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
+        $timeout = $this->timeout;
         try {
-            $response = $this->http->post($url, compact('headers'));
+            $response = $this->http->post($url, compact('headers', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();

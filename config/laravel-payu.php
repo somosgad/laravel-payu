@@ -48,6 +48,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Timeout (in Seconds)
+    |--------------------------------------------------------------------------
+    |
+    | PayULatam: Under normal conditions the connection guarantees response
+    | time, on average 3 seconds, if there is an abnormal situation, the
+    | maximum response time will be 1 minute. It is highly recommended that you
+    | configure timeouts when connecting with PayU.
+    |
+    */
+
+    'timeout' => 60,
+
+    /*
+    |--------------------------------------------------------------------------
     | Zooz Request ID
     |--------------------------------------------------------------------------
     |
