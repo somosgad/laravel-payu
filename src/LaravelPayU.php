@@ -185,13 +185,29 @@ class LaravelPayU
      *  bool $cash_payment is one of:
      *          -- true if it's a cash payment
      *          -- false || null if it's not
+     *  string $cash_vendor is the code of the cash vendor provided by PayU.
+     *         ex: Argentina - "RAPIPAGO","COBRO_EXPRESS", Brasil - "BOLETO_BANCARIO",
+     *             Chile - "MULTICAJA"
+     *  array $additional_details object which contains the additional information
+     *          necessary for the cash order creation. Usually contains:
+     *          [-- string order_language => is the ISO 639-1 code of the text lang.
+     *                     ex: -- "es" for Spanish
+     *                         -- "en" for English
+     *                         -- "pt" for Portuguese
+     *           -- string cash_payment_method_vendor => is the same code as $cash_vendor
+     *           -- string payment_method => is "PSE"
+     *           -- string payment_country => is the ISO 3166-1 alpha-3 of the country]
+     *           --Important! Each country has different keys, for know which is necessary
+     *             read the PayU PaymentOS docs: https://developers.paymentsos.com/docs/
      * @return array
      */
     public function createCharge(
         string $payment_id,
         string $token,
         string $credit_card_cvv = null,
-        bool $cash_payment
+        bool $cash_payment = null,
+        string $cash_vendor = null,
+        array $additional_details = []
     )
     {
         $url = "payments/$payment_id/charges";
@@ -201,13 +217,26 @@ class LaravelPayU
             'private-key' => $this->private_key,
         ]);
         $headers = $this->_checkCustomerDevice($headers);
-        $type = 'tokenized';
-        $json = [
-            'payment_method' => array_filter(
-                compact('credit_card_cvv', 'token', 'type'),
-                'is_not_null',
-            ),
-        ];
+        if ($cash_payment) {
+            $source_type = 'cash';
+            $type = 'untokenized';
+            $json = [
+                'payment_method' => array_filter(compact(
+                    'source_type',
+                    'type',
+                    'cash_vendor',
+                    'additonal_details')
+                ),
+            ];
+        } else {
+            $type = 'tokenized';
+            $json = [
+                'payment_method' => array_filter(
+                    compact('credit_card_cvv', 'token', 'type'),
+                    'is_not_null',
+                ),
+            ];
+        }
         if ($this->provider === 'PayU Argentina') {
 
             // Send the session cookie stored on the device where the transaction was performed from.
