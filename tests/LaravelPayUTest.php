@@ -32,7 +32,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create authorization.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @return void
      */
     public function testCreateAuthorization(LaravelPayU $payu)
@@ -106,7 +106,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create charge.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @depends testCreatePayment
      * @return void
      */
@@ -145,7 +145,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create customer
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @return array
      */
     public function testCreateCustomer(LaravelPayU $payu)
@@ -177,7 +177,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test delete customer
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @depends testGetCustomerById
      * @depends testGetCustomerByReference
      * @depends testCreatePaymentMethod
@@ -200,7 +200,7 @@ class LaravelPayUTest extends TestCase
      * capture), before it has been finalized. The most common procedure is
      * to void an authorization.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @depends testCreatePayment
      * @return void
      */
@@ -227,7 +227,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create payment.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @return void
      */
     public function testMakeRefund(LaravelPayU $payu)
@@ -258,7 +258,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create payment.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @return void
      */
     public function testCreatePayment(LaravelPayU $payu)
@@ -291,7 +291,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create payment.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @depends testGetCustomerById
      * @return void
      */
@@ -346,7 +346,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test create token.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @return array
      */
     public function testCreateToken(LaravelPayU $payu)
@@ -428,7 +428,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test get customer.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @depends testCreateCustomer
      * @return void
      */
@@ -456,7 +456,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test get customer.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @depends testGetCustomerById
      * @return void
      */
@@ -488,7 +488,7 @@ class LaravelPayUTest extends TestCase
     /**
      * Test get token.
      *
-     * @depends testInstance
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @depends testCreateToken
      * @return array
      */
@@ -530,19 +530,5 @@ class LaravelPayUTest extends TestCase
         $this->assertIsString($token['holder_name']);
         $this->assertIsString($token['expiration_date']);
         $this->assertIsNumeric($token['last_4_digits']);
-    }
-
-    /**
-     * Test package's instance.
-     *
-     * @return void
-     */
-    public function testInstance()
-    {
-        $payu = new LaravelPayU;
-
-        $this->assertInstanceOf(LaravelPayU::class, $payu);
-
-        return $payu;
     }
 }

@@ -66,18 +66,70 @@ $currency = 'USD';
 $payment = $payu->createPayment($amount, $currency);
 ```
 
+### Create Token
+
+```php
+$card_number = '4111111111111111';
+$credit_card_cvv = '123';
+$expiration_date = '10/29';
+$holder_name = 'John Doe';
+$token_type = 'credit_card';
+$token = $payu->createToken(
+    $card_number,
+    $credit_card_cvv,
+    $expiration_date,
+    $holder_name,
+    $token_type
+);
+```
+
+### Create Authorization
+
+```php
+$authorization = $payu->createAuthorization($payment['id'], $encrypted_cvv, $token);
+```
+
+### Create Capture
+
+```php
+$capture = $payu->createCapture($payment['id'], $payment['amount']);
+```
+
 ### Create Charge
 
 ```php
 $charge = $payu->createCharge($payment['id'], $token);
 ```
 
-### Create Customer
+### Customer
+
+#### Create Customer
 
 ```php
 $customer_reference = 'johntravolta18021954';
 $email = 'john@travolta.com';
 $customer = $payu->createCustomer($customer_reference, $email);
+```
+
+#### Delete Customer
+
+```php
+$customer_id = '0ab5511c-3a62-4b4b-8682-cb3c15172965';
+$delete = $payu->deleteCustomer($customer_id);
+```
+
+#### Get Customer by ID
+
+```php
+$customer_id = '0ab5511c-3a62-4b4b-8682-cb3c15172965';
+$customer = $payu->getCustomerById($customer_id);
+```
+
+#### Get Customer by Reference
+
+```php
+$customer_reference = 'johntravolta18021954';
+$customer = $payu->getCustomerByReference($customer_reference);
 ```
 
 <small>Note: customer references are unique, so the API doesn't create other customer for the same reference - though you can create multiple customers to the same email.<br>
