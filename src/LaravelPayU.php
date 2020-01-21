@@ -175,16 +175,26 @@ class LaravelPayU
 
     /**
      * Create charge
+     * Create a new billing charge.
      *
+     * recieve:
+     *  string $payment_id identifier of the payment.
+     *         ex: 9640e09b-85d0-4509-a19c-90aa65eb386a
+     *  string $token token which represent the billing.
+     *  string $credit_card_cvv the cvv number of client card.
+     *  bool $cash_payment is one of:
+     *          -- true if it's a cash payment
+     *          -- false || null if it's not
      * @return array
      */
     public function createCharge(
-        string $paymentId,
+        string $payment_id,
         string $token,
-        string $credit_card_cvv = null
+        string $credit_card_cvv = null,
+        bool $cash_payment
     )
     {
-        $url = "payments/$paymentId/charges";
+        $url = "payments/$payment_id/charges";
         $headers = array_merge($this->headers, [
             'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
@@ -284,6 +294,9 @@ class LaravelPayU
      *          --'USD' is US Dollar
      *          --'ARS' is Argentinian Peso.
      *          --'EUR' is European Euro.
+     *  bool $cash_payment is one of:
+     *          -- true if it's a cash payment
+     *          -- false || null if it's not
      *  object $additional_details is an object containing optional additional
      *        data stored in key/value pairs.
      *  string $statement_soft_descriptor The transaction description that will
@@ -298,6 +311,7 @@ class LaravelPayU
     public function createPayment(
         int $amount,
         string $currency,
+        bool $cash_payment = null,
         object $additional_details = null,
         string $statement_soft_descriptor = null,
         object $order = null,
@@ -315,9 +329,19 @@ class LaravelPayU
         if ($this->double_amounts) {
             $amount = $amount * 100;
         }
+
         $currency = strtoupper($currency);
-        $json = array_filter(
-            compact(
+        if($cash_payment){
+            $json = array_filter(
+                compact(
+                    'amount',
+                    'currency',
+                    'statement_soft_descriptor',
+                )
+            );
+        } else {
+            $json = array_filter(
+             compact(
                 'amount',
                 'currency',
                 'additional_details',
@@ -328,7 +352,8 @@ class LaravelPayU
                 'billing_address',
             ),
             'is_not_null',
-        );
+            );
+        }
         $timeout = $this->timeout;
         try {
             $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
@@ -371,7 +396,20 @@ class LaravelPayU
 
     /**
      * Create token
+     * Create a new token for represent a customer.
      *
+     * recieve:
+     *  string $card_number is the customer card number.
+     *  string $credit_card_cvv is the customer card cvv.
+     *  string $expiration_date is the customer card expiration date.
+     *         -- Possible formats:
+     *               mm-yyyy, mm-yy, mm.yyyy, mm.yy,
+     *               mm/yy, mm/yyyy, mm yyyy, or mm yy.
+     *  string $holder_name the name of the card holder.
+     *  string $token_type can be one of:
+     *          -- "credit_card" which represents the credit card
+     *          -- "card_cvv_code" which represents the card sensitive data encrypted
+     *          -- "billing_agreement" which represents a billing
      * @return array
      */
     public function createToken(
@@ -405,7 +443,10 @@ class LaravelPayU
 
     /**
      * Delete customer
+     * Deletes a customer
      *
+     * recieve:
+     *  string $customer_id the customers identification
      * @return boolean
      */
     public function deleteCustomer(string $customer_id)
@@ -433,9 +474,9 @@ class LaravelPayU
     public function getAPIKeys() {
     }
 
-    public function getAuthorization(string $paymentId, string $authorizationid)
+    public function getAuthorization(string $payment_id, string $authorization_id)
     {
-        $url = "payments/$paymentId/authorizations/$authorizationid";
+        $url = "payments/$payment_id/authorizations/$authorization_id";
         $headers = array_merge($this->headers, [
             'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
@@ -475,8 +516,12 @@ class LaravelPayU
     }
 
     /**
-     * Get customer by reference
+     *  Get customer by reference
+     *  Get the customer data by its reference.
      *
+     * recieve:
+     *  string $customer_reference the unique customer identifier.
+     *         -- Important! this has to be unique in whole system.
      * @return array
      */
     public function getCustomerByReference(string $customer_reference)
@@ -544,8 +589,8 @@ class LaravelPayU
         }
     }
 
-    public function makeRefund(string $paymentID) {
-        $url = "payments/${paymentID}/refunds";
+    public function makeRefund(string $payment_id) {
+        $url = "payments/${payment_id}/refunds";
         $headers = array_merge($this->headers, [
             'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
@@ -561,8 +606,8 @@ class LaravelPayU
         }
     }
 
-    public function makeVoid(string $paymentID) {
-        $url = "payments/${paymentID}/voids";
+    public function makeVoid(string $payment_id) {
+        $url = "payments/${payment_id}/voids";
         $headers = array_merge($this->headers, [
             'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
