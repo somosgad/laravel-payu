@@ -148,7 +148,7 @@ class LaravelPayUTest extends TestCase
      * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @return array
      */
-    public function testCreanteCustomer(LaravelPayU $payu)
+    public function testCreateCustomer(LaravelPayU $payu)
     {
         $customer_reference = 'johntravolta18021954';
         $email = 'john@travolta.com';
