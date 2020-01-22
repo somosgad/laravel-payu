@@ -4,6 +4,25 @@ namespace SomosGAD_\LaravelPayU;
 
 class LaravelPayU extends LaravelPayUBase
 {
+    public function createCharge(
+        string $payment_id,
+        string $token,
+        string $credit_card_cvv = null,
+        bool $cash_payment = null,
+        string $cash_vendor = null,
+        array $additional_details = []
+    )
+    {
+        return $this->createGenericCharge(
+            $payment_id,
+            $token,
+            $credit_card_cvv,
+            $cash_payment,
+            $cash_vendor,
+            $additional_details
+        );
+    }
+
     public function createPayment(
         int $amount,
         string $currency,

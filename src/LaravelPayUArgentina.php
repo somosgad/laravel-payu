@@ -4,6 +4,17 @@ namespace SomosGAD_\LaravelPayU;
 
 class LaravelPayUArgentina extends LaravelPayUBase
 {
+    public function createCashCharge(
+        PaymentMethod $payment_method, string $reconciliation_id
+    )
+    {
+        dd($payment_method, $reconciliation_id);
+        /* return $this->createGenericCharge(
+            $payment_method,
+            $reconciliation_id
+        ); */
+    }
+
     public function createCashPayment(
         int $amount,
         string $currency,

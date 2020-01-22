@@ -201,7 +201,7 @@ class LaravelPayUBase
      *             read the PayU PaymentOS docs: https://developers.paymentsos.com/docs/
      * @return array
      */
-    public function createCharge(
+    public function createGenericCharge(
         string $payment_id,
         string $token,
         string $credit_card_cvv = null,
