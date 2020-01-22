@@ -345,8 +345,8 @@ class LaravelPayUBase
         string $statement_soft_descriptor = null,
         object $order = null,
         string $customer_id = null,
-        object $shipping_address = null,
-        object $billing_address = null
+        ShippingAddress $shipping_address = null,
+        BillingAddress $billing_address = null
     )
     {
         $url = 'payments';
@@ -360,27 +360,30 @@ class LaravelPayUBase
         }
 
         $currency = strtoupper($currency);
-        if($cash_payment){
+        if ($cash_payment){
             $json = array_filter(
                 compact(
                     'amount',
                     'currency',
                     'statement_soft_descriptor',
-                )
+                    'shipping_address',
+                    'billing_address',
+                ),
+                'is_not_null',
             );
         } else {
             $json = array_filter(
-             compact(
-                'amount',
-                'currency',
-                'additional_details',
-                'statement_soft_descriptor',
-                'order',
-                'customer_id',
-                'shipping_address',
-                'billing_address',
-            ),
-            'is_not_null',
+                compact(
+                    'amount',
+                    'currency',
+                    'additional_details',
+                    'statement_soft_descriptor',
+                    'order',
+                    'customer_id',
+                    'shipping_address',
+                    'billing_address',
+                ),
+                'is_not_null',
             );
         }
         $timeout = $this->timeout;
