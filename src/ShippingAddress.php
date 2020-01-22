@@ -6,8 +6,14 @@ class ShippingAddress
 {
     public $country;
     public $city;
+    public $email;
     public $first_name;
     public $last_name;
+    public $line1;
+    public $line2;
+    public $phone;
+    public $state;
+    public $zip_code;
 
     public function __construct(
         string $country,

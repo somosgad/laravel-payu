@@ -15,7 +15,13 @@ class LaravelPayUArgentina extends LaravelPayUBase
         return $this->createGenericPayment(
             $amount,
             $currency,
-            $statement_soft_descriptor
+            true,
+            null,
+            $statement_soft_descriptor,
+            null,
+            null,
+            $shipping_address,
+            $billing_address
         );
     }
 }
