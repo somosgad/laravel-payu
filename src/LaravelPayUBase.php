@@ -221,11 +221,14 @@ class LaravelPayUBase
             $source_type = 'cash';
             $type = 'untokenized';
             $json = [
-                'payment_method' => array_filter(compact(
-                    'source_type',
-                    'type',
-                    'cash_vendor',
-                    'additonal_details')
+                'payment_method' => array_filter(
+                    compact(
+                        'source_type',
+                        'type',
+                        'cash_vendor',
+                        'additonal_details'
+                    ),
+                    'is_not_null',
                 ),
             ];
         } else {
