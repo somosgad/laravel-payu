@@ -4,16 +4,6 @@ namespace SomosGAD_\LaravelPayU\Tests;
 
 use SomosGAD_\LaravelPayU\LaravelPayU;
 
-function tokenData(
-    string $card_number,
-    string $credit_card_cvv,
-    string $expiration_date,
-    string $holder_name,
-    string $token_type
-) {
-    return [ $card_number, $credit_card_cvv, $expiration_date, $holder_name, $token_type ];
-}
-
 class TokensTest extends TestCase
 {
     public function creditProvider()

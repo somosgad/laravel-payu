@@ -7,19 +7,83 @@ use SomosGAD_\LaravelPayU\RequestsSchemas\PaymentMethod\Tokenized;
 
 class ChargesTest extends TestCase
 {
+    public function approvedProvider()
+    {
+        $data = [
+            'approved' => tokenData('376414000000009', '123', '10/29', 'APPROVED', 'credit_card'),
+        ];
+        return $data;
+    }
+
+    public function pendingProvider()
+    {
+        $data = [
+            'pending' => tokenData('376414000000009', '123', '10/29', 'PENDING_TRANSACTION_REVIEW', 'credit_card'),
+        ];
+        return $data;
+    }
+
+    public function rejectedProvider()
+    {
+        $data = [
+            'rejected' => tokenData('376414000000009', '123', '10/29', 'REJECTED', 'credit_card'),
+        ];
+        return $data;
+    }
+
+    public function creditProvider()
+    {
+        $data = [
+            'amex credit' => tokenData('376414000000009', '123', '10/29', 'John Doe', 'credit_card'),
+            'argencard credit' => tokenData('5011050000000001', '123', '10/29', 'John Doe', 'credit_card'),
+            'cabal credit' => tokenData('5896570000000008', '123', '10/29', 'John Doe', 'credit_card'),
+            'cencosud credit' => tokenData('6034930000000005', '123', '10/29', 'John Doe', 'credit_card'),
+            'cencosud credit' => tokenData('5197670000000002', '123', '10/29', 'John Doe', 'credit_card'),
+            'master credit' => tokenData('5399090000000009', '123', '10/29', 'John Doe', 'credit_card'),
+            'naranja credit' => tokenData('5895620000000002', '123', '10/29', 'John Doe', 'credit_card'),
+            'visa credit' => tokenData('4850110000000000', '123', '10/29', 'John Doe', 'credit_card'),
+            'visa credit' => tokenData('4036820000000001', '123', '10/29', 'John Doe', 'credit_card'),
+        ];
+        return $data;
+    }
+
+    public function debitProvider()
+    {
+        $data = [
+            'visa debit' => tokenData('4517730000000000', '123', '10/29', 'John Doe', 'credit_card'),
+        ];
+        return $data;
+    }
+
+    public function genericProvider()
+    {
+        $data = [
+            'generic' => tokenData('4111111111111111', '123', '10/29', 'John Doe', 'credit_card'),
+        ];
+        return $data;
+    }
+
     /**
-     * Mock create token.
+     * Test create charge.
      *
+     * @dataProvider approvedProvider
+     * @dataProvider creditProvider
+     * @dataProvider debitProvider
+     * @dataProvider genericProvider
+     * @dataProvider pendingProvider
+     * @dataProvider rejectedProvider
+     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
      * @return void
      */
-    private function mockToken()
+    public function testCreateCharge(
+        string $card_number,
+        string $credit_card_cvv,
+        string $expiration_date,
+        string $holder_name,
+        string $token_type,
+        LaravelPayU $payu
+    )
     {
-        $payu = new LaravelPayU;
-        $card_number = '4111111111111111';
-        $credit_card_cvv = '123';
-        $expiration_date = '10/29';
-        $holder_name = 'John Doe';
-        $token_type = 'credit_card';
         $token = $payu->createToken(
             $card_number,
             $credit_card_cvv,
@@ -27,20 +91,13 @@ class ChargesTest extends TestCase
             $holder_name,
             $token_type
         );
-        return $token;
-    }
 
-    /**
-     * Test create charge.
-     *
-     * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
-     * @depends SomosGAD_\LaravelPayU\Tests\PaymentsTest::testCreatePayment
-     * @return void
-     */
-    public function testCreateCharge(LaravelPayU $payu, array $payment)
-    {
-        $token = $this->mockToken();
+        $amount = 2000;
+        $currency = 'USD';
+        $payment = $payu->createPayment($amount, $currency);
+
         // $payment_method = new Tokenized('tokenized', $token['token']);
+
         $charge = $payu->createCharge(
             $payment['id'],
             $token['token']
