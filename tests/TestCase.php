@@ -8,9 +8,9 @@ use Orchestra\Testbench\TestCase as TestCaseBase;
 
 class TestCase extends TestCaseBase
 {
-    public function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::__construct();
+        parent::__construct($name, $data, $dataName);
 
         // load dot env for phpunit
         $dir = substr(__DIR__, 0, -5); // get pah removing "tests" from it
