@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Str;
+use SomosGAD_\LaravelPayU\RequestsSchemas\PaymentMethod\PaymentMethod;
 
 class LaravelPayUBase
 {
@@ -180,8 +181,6 @@ class LaravelPayUBase
      * recieve:
      *  string $payment_id identifier of the payment.
      *         ex: 9640e09b-85d0-4509-a19c-90aa65eb386a
-     *  string $token token which represent the billing.
-     *  string $credit_card_cvv the cvv number of client card.
      *  bool $cash_payment is one of:
      *          -- true if it's a cash payment
      *          -- false || null if it's not
@@ -203,11 +202,8 @@ class LaravelPayUBase
      */
     public function createGenericCharge(
         string $payment_id,
-        string $token,
-        string $credit_card_cvv = null,
-        bool $cash_payment = null,
-        string $cash_vendor = null,
-        array $additional_details = []
+        PaymentMethod $payment_method,
+        string $reconciliation_id = null
     )
     {
         $url = "payments/$payment_id/charges";
@@ -217,30 +213,17 @@ class LaravelPayUBase
             'private-key' => $this->private_key,
         ]);
         $headers = $this->_checkCustomerDevice($headers);
-        if ($cash_payment) {
-            $source_type = 'cash';
-            $type = 'untokenized';
-            $json = [
-                'payment_method' => array_filter(
-                    compact(
-                        'source_type',
-                        'type',
-                        'cash_vendor',
-                        'additonal_details'
-                    ),
-                    'is_not_null',
-                ),
-            ];
-        } else {
-            $type = 'tokenized';
-            $json = [
-                'payment_method' => array_filter(
-                    compact('credit_card_cvv', 'token', 'type'),
-                    'is_not_null',
-                ),
-            ];
+        if ( ! $reconciliation_id) {
+            $reconciliation_id = $this->_reconciliationId();
         }
-        if ($this->provider === 'PayU Argentina') {
+        $json = [
+            'payment_method' => array_filter(
+                (array) $payment_method,
+                'is_not_null',
+            ),
+            'reconciliation_id' => $reconciliation_id,
+        ];
+        if ($this->provider === 'PayU Argentina' && false) {
 
             // Send the session cookie stored on the device where the transaction was performed from.
             $cookie = '';
@@ -268,7 +251,6 @@ class LaravelPayUBase
                         ],
                     ],
                 ],
-                'reconciliation_id' => $this->_reconciliationId(),
             ]);
         }
         $timeout = $this->timeout;

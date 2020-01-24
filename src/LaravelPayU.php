@@ -2,6 +2,8 @@
 
 namespace SomosGAD_\LaravelPayU;
 
+use SomosGAD_\LaravelPayU\RequestsSchemas\PaymentMethod\Tokenized;
+
 class LaravelPayU extends LaravelPayUBase
 {
     public function createCharge(
@@ -13,13 +15,10 @@ class LaravelPayU extends LaravelPayUBase
         array $additional_details = []
     )
     {
+        $payment_method = new Tokenized('tokenized', $token, $credit_card_cvv);
         return $this->createGenericCharge(
             $payment_id,
-            $token,
-            $credit_card_cvv,
-            $cash_payment,
-            $cash_vendor,
-            $additional_details
+            $payment_method
         );
     }
 

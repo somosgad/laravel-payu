@@ -10,7 +10,7 @@ class PaymentsTest extends TestCase
      * Test create cash payment.
      *
      * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
-     * @return void
+     * @return array
      */
     public function testCreateCashPayment(LaravelPayU $payu)
     {
@@ -49,7 +49,7 @@ class PaymentsTest extends TestCase
      * Test create payment.
      *
      * @depends SomosGAD_\LaravelPayU\Tests\InstanceTest::testInstance
-     * @return void
+     * @return array
      */
     public function testCreatePayment(LaravelPayU $payu)
     {

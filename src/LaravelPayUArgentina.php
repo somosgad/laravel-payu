@@ -2,17 +2,21 @@
 
 namespace SomosGAD_\LaravelPayU;
 
+use SomosGAD_\LaravelPayU\RequestsSchemas\PaymentMethod\UntokenizedAlternativePayment;
+
 class LaravelPayUArgentina extends LaravelPayUBase
 {
     public function createCashCharge(
-        string $payment_id, PaymentMethod $payment_method, string $reconciliation_id
+        string $payment_id,
+        UntokenizedAlternativePayment $payment_method,
+        string $reconciliation_id
     )
     {
-        dd($payment_id, $payment_method, $reconciliation_id);
-        /* return $this->createGenericCharge(
+        return $this->createGenericCharge(
+            $payment_id,
             $payment_method,
             $reconciliation_id
-        ); */
+        );
     }
 
     public function createCashPayment(

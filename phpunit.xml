@@ -11,6 +11,12 @@
          stopOnFailure="false"
          printerClass="Sempro\PHPUnitPrettyPrinter\PrettyPrinter">
     <testsuites>
+        <testsuite name="Charges">
+            <file>tests/InstanceTest.php</file>
+            <file>tests/PaymentsTest.php</file>
+            <file>tests/TokensTest.php</file>
+            <file>tests/ChargesTest.php</file>
+        </testsuite>
         <testsuite name="LaravelPayU">
             <directory>tests</directory>
         </testsuite>
@@ -21,6 +27,10 @@
         <testsuite name="SupportedPaymentMethods">
             <file>tests/InstanceTest.php</file>
             <file>tests/SupportedPaymentMethodsTest.php</file>
+        </testsuite>
+        <testsuite name="Tokens">
+            <file>tests/InstanceTest.php</file>
+            <file>tests/TokensTest.php</file>
         </testsuite>
     </testsuites>
     <filter>
