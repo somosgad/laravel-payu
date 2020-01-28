@@ -2,7 +2,7 @@
 
 namespace SomosGAD_\LaravelPayU;
 
-use SomosGAD_\LaravelPayU\RequestsSchemas\PaymentMethod\Tokenized;
+use SomosGAD_\LaravelPayU\RequestsBodySchemas\PaymentMethods\Tokenized;
 
 class LaravelPayU extends LaravelPayUBase
 {

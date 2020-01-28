@@ -1,11 +1,11 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU;
+namespace SomosGAD_\LaravelPayU\RequestsBodySchemas;
 
 class ShippingAddress
 {
-    public $country;
     public $city;
+    public $country;
     public $email;
     public $first_name;
     public $last_name;
@@ -16,8 +16,8 @@ class ShippingAddress
     public $zip_code;
 
     public function __construct(
-        string $country,
         string $city = null,
+        string $country = null,
         string $email = null,
         string $first_name = null,
         string $last_name = null,
@@ -28,8 +28,8 @@ class ShippingAddress
         string $zip_code = null
     )
     {
-        $this->country = $country;
         $this->city = $city;
+        $this->country = $country;
         $this->email = $email;
         $this->first_name = $first_name;
         $this->last_name = $last_name;

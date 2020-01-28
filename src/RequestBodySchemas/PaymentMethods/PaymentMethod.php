@@ -1,6 +1,6 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\RequestsSchemas\PaymentMethod;
+namespace SomosGAD_\LaravelPayU\RequestsBodySchemas\PaymentMethods;
 
 class PaymentMethod
 {

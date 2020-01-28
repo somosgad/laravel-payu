@@ -6,7 +6,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Str;
-use SomosGAD_\LaravelPayU\RequestsSchemas\PaymentMethod\PaymentMethod;
+use SomosGAD_\LaravelPayU\RequestsBodySchemas\BillingAddress;
+use SomosGAD_\LaravelPayU\RequestsBodySchemas\PaymentMethods\PaymentMethod;
+use SomosGAD_\LaravelPayU\RequestsBodySchemas\ShippingAddress;
+use SomosGAD_\LaravelPayU\RequestsBodySchemas\Token\Token;
 
 class LaravelPayUBase
 {
@@ -448,6 +451,23 @@ class LaravelPayUBase
             'holder_name',
             'token_type',
         );
+        $timeout = $this->timeout;
+        try {
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    public function createToken2(Token $token)
+    {
+        $url = 'tokens';
+        $headers = array_merge($this->headers, [
+            'public_key' => env('PAYU_PUBLIC_KEY'),
+        ]);
+        $json = array_filter($token->toArray(), 'is_not_null');
         $timeout = $this->timeout;
         try {
             $response = $this->http->post($url, compact('headers', 'json', 'timeout'));

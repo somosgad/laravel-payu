@@ -1,6 +1,6 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU;
+namespace SomosGAD_\LaravelPayU\RequestsBodySchemas;
 
 class AdditionalDetails
 {
