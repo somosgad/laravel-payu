@@ -20,8 +20,7 @@ class BillingAddress
         string $line1 = null,
         string $state = null,
         string $zip_code = null
-    )
-    {
+    ) {
         $this->country = $country;
         $this->email = $email;
         $this->first_name = $first_name;
@@ -29,5 +28,18 @@ class BillingAddress
         $this->line1 = $line1;
         $this->state = $state;
         $this->zip_code = $zip_code;
+    }
+
+    public function toArray()
+    {
+        return array_filter([
+            'country' => $this->country,
+            'email' => $this->email,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'line1' => $this->line1,
+            'state' => $this->state,
+            'zip_code' => $this->zip_code,
+        ], 'is_not_null');
     }
 }

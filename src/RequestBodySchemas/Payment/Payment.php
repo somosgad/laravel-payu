@@ -53,8 +53,8 @@ abstract class Payment
             'statement_soft_descriptor' => $this->statement_soft_descriptor,
             'order' => $this->order,
             'customer_id' => $this->customer_id,
-            'shipping_address' => $this->shipping_address,
-            'billing_address' => $this->billing_address,
+            'shipping_address' => $this->shipping_address ? $this->shipping_address->toArray() : null,
+            'billing_address' => $this->billing_address ? $this->billing_address->toArray() : null,
             'addendums' => $this->addendums,
         ], 'is_not_null');
     }
