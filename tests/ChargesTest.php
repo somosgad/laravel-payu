@@ -3,7 +3,7 @@
 namespace SomosGAD_\LaravelPayU\Tests;
 
 use SomosGAD_\LaravelPayU\LaravelPayU;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\PaymentMethods\Tokenized;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\PaymentMethods\Tokenized;
 
 class ChargesTest extends TestCase
 {

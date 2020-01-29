@@ -1,9 +1,9 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\RequestsBodySchemas\Token;
+namespace SomosGAD_\LaravelPayU\RequestBodySchemas\Token;
 
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\ProviderSpecificData;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\ShippingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\ProviderSpecificData;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\ShippingAddress;
 
 class BillingAgreement extends Token
 {

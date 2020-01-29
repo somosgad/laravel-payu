@@ -1,6 +1,6 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\RequestsBodySchemas\Token;
+namespace SomosGAD_\LaravelPayU\RequestBodySchemas\Token;
 
 abstract class Token
 {

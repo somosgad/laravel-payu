@@ -6,10 +6,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Str;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\BillingAddress;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\PaymentMethods\PaymentMethod;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\ShippingAddress;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\Token\Token;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\BillingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\Payment\Payment;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\PaymentMethods\PaymentMethod;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\ShippingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\Token\Token;
 
 class LaravelPayUBase
 {
@@ -374,6 +375,29 @@ class LaravelPayUBase
                 'is_not_null',
             );
         }
+        $timeout = $this->timeout;
+        try {
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    public function createPayment2(Payment $payment)
+    {
+        $url = 'payments';
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        if ($this->double_amounts) {
+            $payment->amount = $payment->amount * 100;
+        }
+        $payment->currency = strtoupper($payment->currency);
+        $json = array_filter($payment->toArray(), 'is_not_null');
         $timeout = $this->timeout;
         try {
             $response = $this->http->post($url, compact('headers', 'json', 'timeout'));

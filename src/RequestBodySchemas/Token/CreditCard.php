@@ -1,10 +1,10 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\RequestsBodySchemas\Token;
+namespace SomosGAD_\LaravelPayU\RequestBodySchemas\Token;
 
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\AdditionalDetails;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\BillingAddress;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\ShippingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\AdditionalDetails;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\BillingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\ShippingAddress;
 
 class CreditCard extends Token
 {

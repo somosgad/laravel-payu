@@ -1,6 +1,6 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\RequestsBodySchemas\PaymentMethods;
+namespace SomosGAD_\LaravelPayU\RequestBodySchemas\PaymentMethods;
 
 class Tokenized extends PaymentMethod
 {

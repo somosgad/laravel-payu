@@ -1,13 +1,13 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\Providers\PayUChile\Payment;
+namespace SomosGAD_\LaravelPayU\RequestBodySchemas\Payment\PayUArgentina;
 
-use SomosGAD_\LaravelPayU\PaymentMethodTypes\Card as CardBase;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\BillingAddress;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\Order;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\ShippingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\Payment\Payment;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\BillingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\Order;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\ShippingAddress;
 
-class Card extends CardBase
+class ArgentinaCard extends Payment
 {
     public $amount;
     public $currency;
@@ -16,9 +16,6 @@ class Card extends CardBase
     public $billing_address;
     public $shipping_address;
 
-    /*
-     * @param Order $order Notes specific to all PayU Latam providers. Only required if the tax_amount for the payment is higher than 0. For a general description of this field, see the API Reference.
-     */
     function __construct(
         int $amount,
         string $currency,

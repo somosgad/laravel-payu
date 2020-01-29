@@ -1,13 +1,13 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\Providers\PayUArgentina\Payment;
+namespace SomosGAD_\LaravelPayU\RequestBodySchemas\Payment\PayUChile;
 
-use SomosGAD_\LaravelPayU\PaymentMethodTypes\Card as CardBase;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\BillingAddress;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\Order;
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\ShippingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\Payment\Payment;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\BillingAddress;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\Order;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\ShippingAddress;
 
-class Card extends CardBase
+class ChileCard extends Payment
 {
     public $amount;
     public $currency;

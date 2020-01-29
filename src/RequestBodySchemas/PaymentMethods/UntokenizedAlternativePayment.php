@@ -1,8 +1,8 @@
 <?php
 
-namespace SomosGAD_\LaravelPayU\RequestsBodySchemas\PaymentMethods;
+namespace SomosGAD_\LaravelPayU\RequestBodySchemas\PaymentMethods;
 
-use SomosGAD_\LaravelPayU\RequestsBodySchemas\AdditionalDetails;
+use SomosGAD_\LaravelPayU\RequestBodySchemas\AdditionalDetails;
 
 class UntokenizedAlternativePayment extends PaymentMethod
 {
