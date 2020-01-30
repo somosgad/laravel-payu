@@ -11,6 +11,7 @@ use SomosGAD_\LaravelPayU\RequestBodySchemas\Payment\Payment;
 use SomosGAD_\LaravelPayU\RequestBodySchemas\PaymentMethods\PaymentMethod;
 use SomosGAD_\LaravelPayU\RequestBodySchemas\ShippingAddress;
 use SomosGAD_\LaravelPayU\RequestBodySchemas\Token\Token;
+use Webmozart\Assert\Assert;
 
 class LaravelPayUBase
 {
@@ -256,6 +257,130 @@ class LaravelPayUBase
                     ],
                 ],
             ]);
+        }
+        $timeout = $this->timeout;
+        try {
+            $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
+            return $this->_format($response);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            return $this->_format($response, $e);
+        }
+    }
+
+    public function validateCreateCharge(string $payment_id, array $json)
+    {
+        // payment id
+        Assert::uuid($payment_id);
+        // reconciliation id
+        if (array_key_exists('reconciliation_id', $json)) {
+            Assert::string($json['reconciliation_id']);
+        }
+        // payment method
+        Assert::keyExists($json, 'payment_method');
+        $payment_method = $json['payment_method'];
+        // type
+        Assert::keyExists($payment_method, 'type');
+        Assert::string($payment_method['type']);
+        Assert::oneOf($payment_method['type'], ['tokenized', 'untokenized']);
+
+        // tokenized
+        if ($payment_method['type'] === 'tokenized') {
+            // token
+            Assert::keyExists($payment_method, 'token');
+            Assert::string($payment_method['token']);
+            // credit card cvv
+            if (array_key_exists('credit_card_cvv', $payment_method)) {
+                Assert::string($payment_method['credit_card_cvv']);
+            }
+
+        // untokenized_alternative_payment
+        } else if ($payment_method['type'] === 'untokenized') {
+            // source type
+            Assert::keyExists($payment_method, 'source_type');
+            Assert::string($payment_method['source_type']);
+            Assert::oneOf($payment_method['source_type'], [
+                'bank_transfer', 'cash', 'ewallet', 'debit_redirect', 'loyalty'
+            ]);
+            // vendor
+            if (array_key_exists('vendor', $payment_method)) {
+                Assert::string($payment_method['vendor']);
+                if ($this->provider === 'PayU Argentina') {
+                    Assert::oneOf($payment_method['vendor'], ['COBRO_EXPRESS', 'PAGOFACIL', 'RAPIPAGO']);
+                } else if ($this->provider === 'PayU Chile') {
+                    Assert::same($payment_method['vendor'], 'MULTICAJA');
+                }
+            }
+            // additional details
+            Assert::nullOrIsArray($payment_method['additional_details']);
+
+        // untokenized_credit_card
+        } else {
+            // source type
+            Assert::keyExists($payment_method, 'source_type');
+            Assert::string($payment_method['source_type']);
+            Assert::same($payment_method['source_type'], 'credit_card');
+            // holder_name
+            Assert::keyExists($payment_method, 'holder_name');
+            Assert::string($payment_method['holder_name']);
+            // expiration date
+            Assert::nullOrString($payment_method['expiration_date']);
+            Assert::nullOrRegex($payment_method['expiration_date'], '^(0?[1-9]|1[0-2])(\/|\-|\.| )\d{2,4}$');
+            // card identity
+            Assert::nullOrIsArray($payment_method['card_identity']);
+            // credit card cvv
+            Assert::nullOrString($payment_method['credit_card_cvv']);
+            Assert::nullOrRegex($payment_method['credit_card_cvv'], '^[0-9]{3}[0-9]?$');
+            // card number
+            Assert::keyExists($payment_method, 'card_number');
+            Assert::regex($payment_method['card_number'], '\d{8}|\d{12,19}');
+        }
+
+        // three_d_secure_attributes
+        if (array_key_exists('three_d_secure_attributes', $json)) {
+            Assert::isArray($json['three_d_secure_attributes']);
+        }
+        // installments
+        if (array_key_exists('installments', $json)) {
+            Assert::isArray($json['installments']);
+        }
+        // merchant_site_url
+        if (array_key_exists('merchant_site_url', $json)) {
+            Assert::string($json['merchant_site_url']);
+            Assert::regex($json['merchant_site_url'], '^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$');
+        }
+        // provider_specific_data
+        if (array_key_exists('provider_specific_data', $json)) {
+            Assert::isArray($json['provider_specific_data']);
+        }
+        // additional_details
+        if (array_key_exists('additional_details', $json)) {
+            Assert::isArray($json['additional_details']);
+        }
+        // cof_transaction_indicators
+        if (array_key_exists('cof_transaction_indicators', $json)) {
+            Assert::isArray($json['cof_transaction_indicators']);
+        }
+        // channel_type
+        if (array_key_exists('channel_type', $json)) {
+            Assert::string($json['channel_type']);
+            Assert::oneOf($json['channel_type'], ['telephone_order', 'mail_order', 'virtual_terminal']);
+        }
+    }
+
+    public function createCharge2(string $payment_id, array $json)
+    {
+        $this->validateCreateCharge($payment_id, $json);
+
+        $url = "payments/$payment_id/charges";
+        $headers = array_merge($this->headers, [
+            'app-id' => $this->app_id,
+            'idempotency-key' => $this->_idemPotencyKey(),
+            'private-key' => $this->private_key,
+        ]);
+        $headers = $this->_checkCustomerDevice($headers);
+        if ( ! array_key_exists('reconciliation_id', $json)) {
+            $json['reconciliation_id'] = $this->_reconciliationId();
         }
         $timeout = $this->timeout;
         try {

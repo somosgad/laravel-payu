@@ -24,7 +24,8 @@
     "keywords": ["Laravel", "LaravelPayU"],
     "require": {
         "guzzlehttp/guzzle": "^6.3 <=6.5.0",
-        "illuminate/support": "^6.0"
+        "illuminate/support": "^6.0",
+        "webmozart/assert": "^1.6"
     },
     "require-dev": {
         "mockery/mockery": "^1.3",
