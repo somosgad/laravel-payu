@@ -13,11 +13,13 @@ class ArgentinaCash extends Payment
         string $currency,
         string $statement_soft_descriptor,
         BillingAddress $billing_address = null,
-        ShippingAddress $shipping_address = null
+        ShippingAddress $shipping_address = null,
+        string $customer_id = null
     ) {
-        parent::__construct($amount, $currency );
+        parent::__construct($amount, $currency);
         $this->statement_soft_descriptor = $statement_soft_descriptor;
         $this->billing_address = $billing_address;
         $this->shipping_address = $shipping_address;
+        $this->customer_id = $customer_id;
     }
 }

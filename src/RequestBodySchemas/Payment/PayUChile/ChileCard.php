@@ -25,7 +25,8 @@ class ChileCard extends Payment
         string $statement_soft_descriptor,
         Order $order = null,
         BillingAddress $billing_address = null,
-        ShippingAddress $shipping_address = null
+        ShippingAddress $shipping_address = null,
+        string $customer_id = null
     )
     {
         $this->amount = $amount;
@@ -34,6 +35,7 @@ class ChileCard extends Payment
         $this->statement_soft_descriptor = $statement_soft_descriptor;
         $this->billing_address = $billing_address;
         $this->shipping_address = $shipping_address;
+        $this->customer_id = $customer_id;
     }
 }
 
