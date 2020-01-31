@@ -268,7 +268,7 @@ class LaravelPayUBase
         }
     }
 
-    public function validateCreateCharge(string $payment_id, array $json)
+    private function _validateCreateCharge(string $payment_id, array $json)
     {
         // payment id
         Assert::uuid($payment_id);
@@ -312,7 +312,13 @@ class LaravelPayUBase
                 }
             }
             // additional details
-            Assert::nullOrIsArray($payment_method['additional_details']);
+            if (array_key_exists('additional_details', $payment_method)) {
+                Assert::isArray($payment_method['additional_details']);
+            }
+            // validate argentina cash type
+            if ($payment_method['source_type'] === 'cash' && $this->provider === 'PayU Argentina') {
+                $this->_validateArgentinaCashCharge($json);
+            }
 
         // untokenized_credit_card
         } else {
@@ -324,13 +330,19 @@ class LaravelPayUBase
             Assert::keyExists($payment_method, 'holder_name');
             Assert::string($payment_method['holder_name']);
             // expiration date
-            Assert::nullOrString($payment_method['expiration_date']);
-            Assert::nullOrRegex($payment_method['expiration_date'], '^(0?[1-9]|1[0-2])(\/|\-|\.| )\d{2,4}$');
+            if (array_key_exists('expiration_date', $payment_method)) {
+                Assert::string($payment_method['expiration_date']);
+                Assert::regex($payment_method['expiration_date'], '^(0?[1-9]|1[0-2])(\/|\-|\.| )\d{2,4}$');
+            }
             // card identity
-            Assert::nullOrIsArray($payment_method['card_identity']);
+            if (array_key_exists('card_identity', $payment_method)) {
+                Assert::isArray($payment_method['card_identity']);
+            }
             // credit card cvv
-            Assert::nullOrString($payment_method['credit_card_cvv']);
-            Assert::nullOrRegex($payment_method['credit_card_cvv'], '^[0-9]{3}[0-9]?$');
+            if (array_key_exists('credit_card_cvv', $payment_method)) {
+                Assert::string($payment_method['credit_card_cvv']);
+                Assert::regex($payment_method['credit_card_cvv'], '^[0-9]{3}[0-9]?$');
+            }
             // card number
             Assert::keyExists($payment_method, 'card_number');
             Assert::regex($payment_method['card_number'], '\d{8}|\d{12,19}');
@@ -368,9 +380,42 @@ class LaravelPayUBase
         }
     }
 
+    private function _validateArgentinaCashCharge(array $json)
+    {
+        // payment method
+        Assert::keyExists($json, 'payment_method');
+        if ($payment_method = $json['payment_method']) {
+            // source type
+            Assert::keyExists($payment_method, 'source_type');
+            // type
+            Assert::keyExists($payment_method, 'type');
+            // vendor
+            Assert::keyExists($payment_method, 'vendor');
+            Assert::oneOf($payment_method['vendor'], ['COBRO_EXPRESS', 'PAGOFACIL', 'RAPIPAGO']);
+            // additional details
+            Assert::keyExists($payment_method, 'additional_details');
+            if ($additional_details = $payment_method['additional_details']) {
+                // order language
+                Assert::keyExists($additional_details, 'order_language');
+                Assert::length($additional_details['order_language'], 2);
+                // cash_payment_method_vendor
+                Assert::keyExists($additional_details, 'cash_payment_method_vendor');
+                // payment_method
+                Assert::keyExists($additional_details, 'payment_method');
+                Assert::same($additional_details['payment_method'], 'PSE');
+                // payment_country
+                Assert::keyExists($additional_details, 'payment_country');
+                Assert::length($additional_details['payment_country'], 3);
+            }
+        }
+        // reconciliation id
+        Assert::keyExists($json, 'reconciliation_id');
+        Assert::maxLength($json['reconciliation_id'], 255);
+    }
+
     public function createCharge2(string $payment_id, array $json)
     {
-        $this->validateCreateCharge($payment_id, $json);
+        $this->_validateCreateCharge($payment_id, $json);
 
         $url = "payments/$payment_id/charges";
         $headers = array_merge($this->headers, [
@@ -388,6 +433,7 @@ class LaravelPayUBase
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
+            dd($headers, $json);
             return $this->_format($response, $e);
         }
     }
