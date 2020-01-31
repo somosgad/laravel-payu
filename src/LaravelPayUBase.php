@@ -469,7 +469,7 @@ class LaravelPayUBase
             // country
             if (array_key_exists('country', $shipping_address)) {
                 Assert::string($shipping_address['country']);
-                Assert::regex($shipping_address['country'], '^[A-Z]{3}$');
+                Assert::regex($shipping_address['country'], '/^[A-Z]{3}$/');
             }
             // state
             if (array_key_exists('state', $shipping_address)) {
