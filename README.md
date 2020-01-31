@@ -105,10 +105,50 @@ $charge = $payu->createCharge($payment['id'], $token);
 
 #### Create Customer
 
+##### Required Props
+
+```php
+$json = [
+    'customer_reference' => 'johntravolta18021954',
+];
+$customer = $payu->createCustomer($json);
+```
+
+##### First Customer Sample
+
 ```php
 $json = [
     'customer_reference' => 'johntravolta18021954',
     'email' => 'john@travolta.com',
+];
+$customer = $payu->createCustomer($json);
+```
+
+##### Optional Params
+
+```php
+$json = [
+    'customer_reference' => 'johntravolta18021954',
+    'email' => 'john@travolta.com',
+    'first_name' => 'John',
+    'last_name' => 'Travolta',
+    'additional_details' => [
+        'extra1' => 'Info Extra 1',
+        'extra2' => 'Info Extra 2',
+    ],
+    'shipping_address' => [
+        'country' => 'ARG',
+        'state' => 'TX',
+        'city' => 'Customer Shipping City',
+        'line1' => '10705 Old Mill Rd',
+        'line2' => '10706 Young Mill Rd',
+        'zip_code' => '75402-3435',
+        'title' => 'Dr.',
+        'first_name' => 'John',
+        'last_name' => 'Travolta',
+        'phone' => '23645963',
+        'email' => 'john@travolta.com',
+    ],
 ];
 $customer = $payu->createCustomer($json);
 ```
