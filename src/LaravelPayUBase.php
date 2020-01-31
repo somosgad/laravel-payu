@@ -438,6 +438,14 @@ class LaravelPayUBase
         }
     }
 
+    private function _validateCreateCustomer(array $json)
+    {
+        Assert::keyExists($json, 'customer_reference');
+        Assert::string($json['customer_reference']);
+        Assert::keyExists($json, 'email');
+        Assert::string($json['email']);
+    }
+
     /**
      * Create customer
      * Create a new Customer.
@@ -448,18 +456,15 @@ class LaravelPayUBase
      *  string $email customer email address.
      * @return array
      */
-    public function createCustomer(
-        string $customer_reference,
-        string $email
-    )
+    public function createCustomer(array $json)
     {
+        $this->_validateCreateCustomer($json);
         $url = "customers";
         $headers = array_merge($this->headers, [
             'app-id' => $this->app_id,
             'idempotency-key' => $this->_idemPotencyKey(),
             'private-key' => $this->private_key,
         ]);
-        $json = compact('customer_reference', 'email');
         $timeout = $this->timeout;
         try {
             $response = $this->http->post($url, compact('headers', 'json', 'timeout'));

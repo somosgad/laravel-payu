@@ -106,9 +106,11 @@ $charge = $payu->createCharge($payment['id'], $token);
 #### Create Customer
 
 ```php
-$customer_reference = 'johntravolta18021954';
-$email = 'john@travolta.com';
-$customer = $payu->createCustomer($customer_reference, $email);
+$json = [
+    'customer_reference' => 'johntravolta18021954',
+    'email' => 'john@travolta.com',
+];
+$customer = $payu->createCustomer($json);
 ```
 
 #### Delete Customer
