@@ -58,13 +58,18 @@ use SomosGAD_\LaravelPayU\LaravelPayU;
 $payu = new LaravelPayU;
 ```
 
-### Create Payment
+---
 
+### Payment
+
+#### Create
 ```php
 $amount = 2000;
 $currency = 'USD';
 $payment = $payu->createPayment($amount, $currency);
 ```
+
+---
 
 ### Create Token
 

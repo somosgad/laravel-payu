@@ -415,6 +415,9 @@ class LaravelPayUBase
 
     public function createCharge2(string $payment_id, array $json)
     {
+        if ( ! array_key_exists('reconciliation_id', $json)) {
+            $json['reconciliation_id'] = $this->_reconciliationId();
+        }
         $this->_validateCreateCharge($payment_id, $json);
 
         $url = "payments/$payment_id/charges";
@@ -424,17 +427,16 @@ class LaravelPayUBase
             'private-key' => $this->private_key,
         ]);
         $headers = $this->_checkCustomerDevice($headers);
-        if ( ! array_key_exists('reconciliation_id', $json)) {
-            $json['reconciliation_id'] = $this->_reconciliationId();
-        }
         $timeout = $this->timeout;
         try {
             $response = $this->http->post($url, compact('headers', 'json', 'timeout'));
             return $this->_format($response);
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            dd($headers, $json);
-            return $this->_format($response, $e);
+            $status = $response->getStatusCode();
+            $error = $this->_format($response, $e);
+            dd('error', $headers, $json, $error, $status);
+            return $error;
         }
     }
 
