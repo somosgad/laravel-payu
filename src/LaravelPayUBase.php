@@ -440,10 +440,83 @@ class LaravelPayUBase
 
     private function _validateCreateCustomer(array $json)
     {
+        // customer reference
         Assert::keyExists($json, 'customer_reference');
         Assert::string($json['customer_reference']);
-        Assert::keyExists($json, 'email');
-        Assert::string($json['email']);
+        // first_name
+        if (array_key_exists('first_name', $json)) {
+            Assert::string($json['first_name']);
+        }
+        // last_name
+        if (array_key_exists('last_name', $json)) {
+            Assert::string($json['last_name']);
+        }
+        // email
+        if (array_key_exists('email', $json)) {
+            Assert::string($json['email']);
+        }
+        // additional_details
+        if (array_key_exists('additional_details', $json)) {
+            Assert::isArray($json['additional_details']);
+            foreach ($json['additional_details'] as $property) {
+                Assert::string($property);
+            }
+        }
+        // shipping_address
+        if (array_key_exists('shipping_address', $json)) {
+            $shipping_address = $json['shipping_address'];
+            Assert::isArray($shipping_address);
+            // country
+            if (array_key_exists('country', $shipping_address)) {
+                Assert::string($shipping_address['country']);
+                Assert::regex($shipping_address['country'], '^[A-Z]{3}$');
+            }
+            // state
+            if (array_key_exists('state', $shipping_address)) {
+                Assert::string($shipping_address['state']);
+            }
+            // line1
+            if (array_key_exists('line1', $shipping_address)) {
+                Assert::string($shipping_address['line1']);
+            }
+            // line2
+            if (array_key_exists('line2', $shipping_address)) {
+                Assert::string($shipping_address['line2']);
+            }
+            // zip_code
+            if (array_key_exists('zip_code', $shipping_address)) {
+                Assert::string($shipping_address['zip_code']);
+            }
+            // title
+            if (array_key_exists('title', $shipping_address)) {
+                Assert::string($shipping_address['title']);
+            }
+            // first_name
+            if (array_key_exists('first_name', $shipping_address)) {
+                Assert::string($shipping_address['first_name']);
+            }
+            // last_name
+            if (array_key_exists('last_name', $shipping_address)) {
+                Assert::string($shipping_address['last_name']);
+            }
+            // phone
+            if (array_key_exists('phone', $shipping_address)) {
+                Assert::string($shipping_address['phone']);
+            }
+            // email
+            if (array_key_exists('email', $shipping_address)) {
+                Assert::string($shipping_address['email']);
+            }
+        }
+        // payment_methods
+        if (array_key_exists('payment_methods', $json)) {
+            $payment_methods = $json['payment_methods'];
+            Assert::isArray($payment_methods);
+            Assert::maxCount($payment_methods, 10);
+            foreach ($payment_methods as $property) {
+                Assert::string($property);
+            }
+        }
     }
 
     /**
