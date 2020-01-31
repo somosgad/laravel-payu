@@ -332,7 +332,7 @@ class LaravelPayUBase
             // expiration date
             if (array_key_exists('expiration_date', $payment_method)) {
                 Assert::string($payment_method['expiration_date']);
-                Assert::regex($payment_method['expiration_date'], '^(0?[1-9]|1[0-2])(\/|\-|\.| )\d{2,4}$');
+                Assert::regex($payment_method['expiration_date'], '/^(0?[1-9]|1[0-2])(\/|\-|\.| )\d{2,4}$/');
             }
             // card identity
             if (array_key_exists('card_identity', $payment_method)) {
@@ -341,11 +341,11 @@ class LaravelPayUBase
             // credit card cvv
             if (array_key_exists('credit_card_cvv', $payment_method)) {
                 Assert::string($payment_method['credit_card_cvv']);
-                Assert::regex($payment_method['credit_card_cvv'], '^[0-9]{3}[0-9]?$');
+                Assert::regex($payment_method['credit_card_cvv'], '/^[0-9]{3}[0-9]?$/');
             }
             // card number
             Assert::keyExists($payment_method, 'card_number');
-            Assert::regex($payment_method['card_number'], '\d{8}|\d{12,19}');
+            Assert::regex($payment_method['card_number'], '/\d{8}|\d{12,19}/');
         }
 
         // three_d_secure_attributes
@@ -359,7 +359,7 @@ class LaravelPayUBase
         // merchant_site_url
         if (array_key_exists('merchant_site_url', $json)) {
             Assert::string($json['merchant_site_url']);
-            Assert::regex($json['merchant_site_url'], '^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$');
+            Assert::regex($json['merchant_site_url'], '/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/');
         }
         // provider_specific_data
         if (array_key_exists('provider_specific_data', $json)) {
