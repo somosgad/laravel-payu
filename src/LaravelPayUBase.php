@@ -304,19 +304,20 @@ class LaravelPayUBase
             // vendor
             if (array_key_exists('vendor', $payment_method)) {
                 Assert::string($payment_method['vendor']);
-                if ($this->provider === 'PayU Argentina') {
-                    Assert::oneOf($payment_method['vendor'], ['COBRO_EXPRESS', 'PAGOFACIL', 'RAPIPAGO']);
-                } else if ($this->provider === 'PayU Chile') {
-                    Assert::same($payment_method['vendor'], 'MULTICAJA');
-                }
             }
             // additional details
             if (array_key_exists('additional_details', $payment_method)) {
                 Assert::isArray($payment_method['additional_details']);
             }
-            // validate argentina cash type
-            if ($payment_method['source_type'] === 'cash' && $this->provider === 'PayU Argentina') {
-                $this->_validateArgentinaCashCharge($json);
+            // validate cash charges
+            if ($payment_method['source_type'] === 'cash') {
+                // for argentina
+                if ($this->provider === 'PayU Argentina') {
+                    $this->_validateArgentinaCashCharge($json);
+                // for chile
+                } else if ($this->provider === 'PayU Chile') {
+                    Assert::same($payment_method['vendor'], 'MULTICAJA');
+                }
             }
 
         // untokenized_credit_card
@@ -386,8 +387,10 @@ class LaravelPayUBase
         if ($payment_method = $json['payment_method']) {
             // source type
             Assert::keyExists($payment_method, 'source_type');
+            Assert::string($payment_method, 'source_type');
             // type
             Assert::keyExists($payment_method, 'type');
+            Assert::string($payment_method, 'type');
             // vendor
             Assert::keyExists($payment_method, 'vendor');
             Assert::oneOf($payment_method['vendor'], ['COBRO_EXPRESS', 'PAGOFACIL', 'RAPIPAGO']);
@@ -395,16 +398,20 @@ class LaravelPayUBase
             Assert::keyExists($payment_method, 'additional_details');
             if ($additional_details = $payment_method['additional_details']) {
                 // order language
-                Assert::keyExists($additional_details, 'order_language');
-                Assert::length($additional_details['order_language'], 2);
+                if (array_key_exists('order_language', $additional_details)) {
+                    Assert::length($additional_details['order_language'], 2);
+                    Assert::oneOf($additional_details['order_language'], ['ES', 'PT', 'EN']);
+                }
                 // cash_payment_method_vendor
                 Assert::keyExists($additional_details, 'cash_payment_method_vendor');
+                Assert::string($additional_details, 'cash_payment_method_vendor');
                 // payment_method
                 Assert::keyExists($additional_details, 'payment_method');
                 Assert::same($additional_details['payment_method'], 'PSE');
                 // payment_country
                 Assert::keyExists($additional_details, 'payment_country');
                 Assert::length($additional_details['payment_country'], 3);
+                Assert::regex($additional_details['payment_country'], '/^[A-Z]{3}$/');
             }
         }
         // reconciliation id
