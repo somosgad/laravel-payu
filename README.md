@@ -101,6 +101,8 @@ $capture = $payu->createCapture($payment['id'], $payment['amount']);
 $charge = $payu->createCharge($payment['id'], $token);
 ```
 
+---
+
 ### Customer
 
 #### Create Customer
@@ -176,6 +178,8 @@ $customer = $payu->getCustomerByReference($customer_reference);
 
 <small>Note: customer references are unique, so the API doesn't create other customer for the same reference - though you can create multiple customers to the same email.<br>
 Be sure to choose an unique identifiquer of your platform to use as customer reference, it could be an ID, an email (if you validate by unique emails), document or anything else you want as longs as it's unique.</small>
+
+---
 
 ### Create Payment Method
 
