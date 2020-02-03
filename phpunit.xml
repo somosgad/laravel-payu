@@ -11,6 +11,9 @@
          stopOnFailure="false"
          printerClass="Sempro\PHPUnitPrettyPrinter\PrettyPrinter">
     <testsuites>
+        <testsuite name="Cash">
+            <file>tests/CashTest.php</file>
+        </testsuite>
         <testsuite name="Charges">
             <file>tests/InstanceTest.php</file>
             <file>tests/ChargesTest.php</file>

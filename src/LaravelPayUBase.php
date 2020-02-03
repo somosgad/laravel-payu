@@ -271,13 +271,16 @@ class LaravelPayUBase
     {
         // payment id
         Assert::uuid($payment_id);
+
         // reconciliation id
         if (array_key_exists('reconciliation_id', $json)) {
             Assert::string($json['reconciliation_id']);
         }
+
         // payment method
         Assert::keyExists($json, 'payment_method');
         $payment_method = $json['payment_method'];
+
         // type
         Assert::keyExists($payment_method, 'type');
         Assert::string($payment_method['type']);
@@ -285,9 +288,11 @@ class LaravelPayUBase
 
         // tokenized
         if ($payment_method['type'] === 'tokenized') {
+
             // token
             Assert::keyExists($payment_method, 'token');
             Assert::string($payment_method['token']);
+
             // credit card cvv
             if (array_key_exists('credit_card_cvv', $payment_method)) {
                 Assert::string($payment_method['credit_card_cvv']);
@@ -295,25 +300,31 @@ class LaravelPayUBase
 
         // untokenized_alternative_payment
         } else if ($payment_method['type'] === 'untokenized') {
+
             // source type
             Assert::keyExists($payment_method, 'source_type');
             Assert::string($payment_method['source_type']);
             Assert::oneOf($payment_method['source_type'], [
                 'bank_transfer', 'cash', 'ewallet', 'debit_redirect', 'loyalty'
             ]);
+
             // vendor
             if (array_key_exists('vendor', $payment_method)) {
                 Assert::string($payment_method['vendor']);
             }
+
             // additional details
             if (array_key_exists('additional_details', $payment_method)) {
                 Assert::isArray($payment_method['additional_details']);
             }
+
             // validate cash charges
             if ($payment_method['source_type'] === 'cash') {
+
                 // for argentina
                 if ($this->provider === 'PayU Argentina') {
                     $this->_validateArgentinaCashCharge($json);
+
                 // for chile
                 } else if ($this->provider === 'PayU Chile') {
                     Assert::same($payment_method['vendor'], 'MULTICAJA');
@@ -322,27 +333,33 @@ class LaravelPayUBase
 
         // untokenized_credit_card
         } else {
+
             // source type
             Assert::keyExists($payment_method, 'source_type');
             Assert::string($payment_method['source_type']);
             Assert::same($payment_method['source_type'], 'credit_card');
+
             // holder_name
             Assert::keyExists($payment_method, 'holder_name');
             Assert::string($payment_method['holder_name']);
+
             // expiration date
             if (array_key_exists('expiration_date', $payment_method)) {
                 Assert::string($payment_method['expiration_date']);
                 Assert::regex($payment_method['expiration_date'], '/^(0?[1-9]|1[0-2])(\/|\-|\.| )\d{2,4}$/');
             }
+
             // card identity
             if (array_key_exists('card_identity', $payment_method)) {
                 Assert::isArray($payment_method['card_identity']);
             }
+
             // credit card cvv
             if (array_key_exists('credit_card_cvv', $payment_method)) {
                 Assert::string($payment_method['credit_card_cvv']);
                 Assert::regex($payment_method['credit_card_cvv'], '/^[0-9]{3}[0-9]?$/');
             }
+
             // card number
             Assert::keyExists($payment_method, 'card_number');
             Assert::regex($payment_method['card_number'], '/\d{8}|\d{12,19}/');
@@ -352,27 +369,33 @@ class LaravelPayUBase
         if (array_key_exists('three_d_secure_attributes', $json)) {
             Assert::isArray($json['three_d_secure_attributes']);
         }
+
         // installments
         if (array_key_exists('installments', $json)) {
             Assert::isArray($json['installments']);
         }
+
         // merchant_site_url
         if (array_key_exists('merchant_site_url', $json)) {
             Assert::string($json['merchant_site_url']);
             Assert::regex($json['merchant_site_url'], '/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/');
         }
+
         // provider_specific_data
         if (array_key_exists('provider_specific_data', $json)) {
             Assert::isArray($json['provider_specific_data']);
         }
+
         // additional_details
         if (array_key_exists('additional_details', $json)) {
             Assert::isArray($json['additional_details']);
         }
+
         // cof_transaction_indicators
         if (array_key_exists('cof_transaction_indicators', $json)) {
             Assert::isArray($json['cof_transaction_indicators']);
         }
+
         // channel_type
         if (array_key_exists('channel_type', $json)) {
             Assert::string($json['channel_type']);
@@ -385,35 +408,45 @@ class LaravelPayUBase
         // payment method
         Assert::keyExists($json, 'payment_method');
         if ($payment_method = $json['payment_method']) {
+
             // source type
             Assert::keyExists($payment_method, 'source_type');
-            Assert::string($payment_method, 'source_type');
+            Assert::string($payment_method['source_type']);
+
             // type
             Assert::keyExists($payment_method, 'type');
-            Assert::string($payment_method, 'type');
+            Assert::string($payment_method['type']);
+
             // vendor
             Assert::keyExists($payment_method, 'vendor');
             Assert::oneOf($payment_method['vendor'], ['COBRO_EXPRESS', 'PAGOFACIL', 'RAPIPAGO']);
+
             // additional details
             Assert::keyExists($payment_method, 'additional_details');
             if ($additional_details = $payment_method['additional_details']) {
+
                 // order language
                 if (array_key_exists('order_language', $additional_details)) {
                     Assert::length($additional_details['order_language'], 2);
                     Assert::oneOf($additional_details['order_language'], ['ES', 'PT', 'EN']);
                 }
+
                 // cash_payment_method_vendor
                 Assert::keyExists($additional_details, 'cash_payment_method_vendor');
-                Assert::string($additional_details, 'cash_payment_method_vendor');
+                Assert::string($additional_details['cash_payment_method_vendor']);
+
                 // payment_method
                 Assert::keyExists($additional_details, 'payment_method');
                 Assert::same($additional_details['payment_method'], 'PSE');
+
                 // payment_country
                 Assert::keyExists($additional_details, 'payment_country');
                 Assert::length($additional_details['payment_country'], 3);
                 Assert::regex($additional_details['payment_country'], '/^[A-Z]{3}$/');
+                Assert::same($additional_details['payment_country'], 'ARG');
             }
         }
+
         // reconciliation id
         Assert::keyExists($json, 'reconciliation_id');
         Assert::maxLength($json['reconciliation_id'], 255);
@@ -421,10 +454,26 @@ class LaravelPayUBase
 
     public function createCharge2(string $payment_id, array $json)
     {
+        // create reconciliation_id if needed
         if ( ! array_key_exists('reconciliation_id', $json)) {
             $json['reconciliation_id'] = $this->_reconciliationId();
+
+        // stringify reconciliation_id if it exists
+        } else if ($json['reconciliation_id']) {
+            $json['reconciliation_id'] = (string) $json['reconciliation_id'];
         }
 
+        // uppercase order_language if it exists
+        if (array_key_exists('payment_method', $json) && is_array($json['payment_method']) &&
+            array_key_exists('additional_details', $json['payment_method']) &&
+            is_array($json['payment_method']['additional_details']) &&
+            array_key_exists('order_language', $json['payment_method']['additional_details'])) {
+
+            $json['payment_method']['additional_details']['order_language'] =
+                strtoupper($json['payment_method']['additional_details']['order_language']);
+        }
+
+        // validate request
         $this->_validateCreateCharge($payment_id, $json);
 
         $url = "payments/$payment_id/charges";
@@ -452,6 +501,7 @@ class LaravelPayUBase
         // customer reference
         Assert::keyExists($json, 'customer_reference');
         Assert::string($json['customer_reference']);
+
         // first_name
         if (array_key_exists('first_name', $json)) {
             Assert::string($json['first_name']);
@@ -540,7 +590,14 @@ class LaravelPayUBase
      */
     public function createCustomer(array $json)
     {
+        // stringify customer reference
+        if (array_key_exists('customer_reference', $json)) {
+            $json['customer_reference'] = (string) $json['customer_reference'];
+        }
+
+        // validate
         $this->_validateCreateCustomer($json);
+
         $url = "customers";
         $headers = array_merge($this->headers, [
             'app-id' => $this->app_id,
