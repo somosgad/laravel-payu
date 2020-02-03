@@ -100,11 +100,41 @@ $authorization = $payu->createAuthorization($payment['id'], $encrypted_cvv, $tok
 $capture = $payu->createCapture($payment['id'], $payment['amount']);
 ```
 
-### Create Charge
+---
+
+### Charge
+
+#### Create Card Charge
 
 ```php
 $charge = $payu->createCharge($payment['id'], $token);
 ```
+
+#### Create Cash Charge
+
+```php
+$charge = $payu->createCharge2($payment['id'], [
+    'payment_method' => [
+        'source_type' => 'cash',
+        'type' => 'untokenized',
+        'vendor' => 'COBRO_EXPRESS',
+        'additional_details' => [
+            'order_language' => 'en',
+            'cash_payment_method_vendor' => 'COBRO_EXPRESS',
+            'payment_method' => 'PSE',
+            'payment_country' => 'ARG',
+        ],
+    ],
+    'reconciliation_id' => time(),
+];
+```
+
+\* Notes:
+
+1. `order_language` is always uppercased for you; 
+2. Omitted `reconciliation_id` gets created;
+3. Only `ARG` `payment_country` are able to create cash charges for Argentina;
+4. Payments for cash charges must be created with `customer_id` set and customer must have `shipping_address` set with at least one field, otherwise, the receipt won't be printable or downloadable.
 
 ---
 
@@ -115,26 +145,29 @@ $charge = $payu->createCharge($payment['id'], $token);
 ##### Required Props
 
 ```php
-$json = [
+$customer = $payu->createCustomer([
     'customer_reference' => 'johntravolta18021954',
-];
-$customer = $payu->createCustomer($json);
+]);
 ```
 
-##### First Customer Sample
+\* Notes:
+
+1. `customer_reference`s are unique, API won't create customers for same references. Choose something like an ID, document or anything else unique and immutable to set as `customer_reference`.
+2. PayU Argentina won't print or download PDF if you haven't set customer's `shipping_address` with at least one info (like `country` or any other field).
+
+##### Customer Sample from PayU API Docs
 
 ```php
-$json = [
+$customer = $payu->createCustomer([
     'customer_reference' => 'johntravolta18021954',
     'email' => 'john@travolta.com',
-];
-$customer = $payu->createCustomer($json);
+]);
 ```
 
-##### Optional Params
+##### Optional Props
 
 ```php
-$json = [
+$customer = $payu->createCustomer([
     'customer_reference' => 'johntravolta18021954',
     'email' => 'john@travolta.com',
     'first_name' => 'John',
@@ -156,8 +189,7 @@ $json = [
         'phone' => '23645963',
         'email' => 'john@travolta.com',
     ],
-];
-$customer = $payu->createCustomer($json);
+]);
 ```
 
 #### Delete Customer
@@ -174,15 +206,13 @@ $customer_id = '0ab5511c-3a62-4b4b-8682-cb3c15172965';
 $customer = $payu->getCustomerById($customer_id);
 ```
 
-#### Get Customer by Reference
+#### Get Customers by Reference
 
 ```php
 $customer_reference = 'johntravolta18021954';
-$customer = $payu->getCustomerByReference($customer_reference);
+$customers = $payu->getCustomerByReference($customer_reference);
 ```
-
-<small>Note: customer references are unique, so the API doesn't create other customer for the same reference - though you can create multiple customers to the same email.<br>
-Be sure to choose an unique identifiquer of your platform to use as customer reference, it could be an ID, an email (if you validate by unique emails), document or anything else you want as longs as it's unique.</small>
+\* Note: `getCustomerByReference` returns an `array` not a single record like `getCustomerById`;
 
 ---
 
